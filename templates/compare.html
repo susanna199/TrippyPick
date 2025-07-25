@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Compare Packages | TrippyPick{% endblock %}
+
+{% block content %}
+<section id="compare-page">
+  <div class="compare-header">
+    <h1>Compare Packages</h1>
+    <p>Compare up to 3 travel packages side by side</p>
+  </div>
+
+  <div class="compare-grid">
+    {% for i in range(3) %}
+      {% if packages[i] is defined %}
+      <div class="compare-card">
+        <div class="rank-badge">#{{ i + 1 }}</div>
+        <div class="image-placeholder">🖼️</div>
+        <h3>{{ packages[i].title }}</h3>
+        <p class="location">📍 {{ packages[i].location }}</p>
+        <div class="price">
+          <span class="current">${{ packages[i].price }}</span>
+          <span class="original">${{ packages[i].original_price }}</span>
+          <span class="per-person">per person</span>
+        </div>
+        <p class="duration">📅 {{ packages[i].duration }}</p>
+        <p class="rating">⭐ {{ packages[i].rating }} <span>({{ packages[i].reviews }} reviews)</span></p>
+        <p class="group">👥 Max {{ packages[i].group_size }}</p>
+        <p class="difficulty">Difficulty: <span class="tag {{ packages[i].difficulty|lower }}">{{ packages[i].difficulty }}</span></p>
+
+        <div class="tag-row">
+          {% for tag in packages[i].tags %}
+            <span class="tag highlight">{{ tag }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="includes">
+          <h4>What's Included</h4>
+          <ul>
+            {% for item in packages[i].included %}
+              <li>✔️ {{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <p class="provider">Provider<br><strong>@{{ packages[i].provider }}</strong></p>
+      </div>
+      {% else %}
+      <div class="compare-card empty">
+        <div class="add-package">
+          <div class="plus-icon">+</div>
+          <p>Add Package</p>
+          <small>Compare up to 3 packages</small>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

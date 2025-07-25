@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Browse Packages | TrippyPick{% endblock %}
+
+{% block content %}
+<section id="browse-page">
+  <div class="browse-container">
+    
+    <!-- Filters -->
+    <div class="filters">
+      <h2>Filters</h2>
+      <input class="search-input" type="text" placeholder="Search destination" />
+      <select class="dropdown">
+        <option>Any Duration</option>
+        <option>1-2 Days</option>
+        <option>3-5 Days</option>
+      </select>
+      <select class="dropdown">
+        <option>Any Theme</option>
+        <option>Adventure</option>
+        <option>Beach</option>
+      </select>
+      <button class="apply-btn">Apply Filters</button>
+    </div>
+
+    <!-- Package Cards -->
+    <div class="package-grid cards">
+      {% for package in packages %}
+      <div class="card">
+        <div class="image-placeholder">🏔️</div>
+        <div class="discount">20% OFF</div>
+        <h3>{{ package.title }}</h3>
+        <p>{{ package.destination }}</p>
+        <div class="tags">
+          <span class="tag">{{ package.theme }}</span>
+          <span class="tag">3D/2N</span>
+        </div>
+        <div class="price">
+          <span class="current">₹{{ package.price }}</span>
+          <span class="original">₹{{ package.price + 2000 }}</span>
+        </div>
+        <div class="buttons">
+          <button class="details-btn">View</button>
+          <button class="compare-btn">Compare</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

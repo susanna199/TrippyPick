@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Home | TrippyPick{% endblock %}
+
+{% block content %}
+<section id="home-page">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>{{ title }}</h1>
+      <p>Compare and book curated travel packages from verified partners using AI-powered filters.</p>
+      <div class="search-bar">
+        <input type="text" placeholder="Search destinations, packages...">
+        <button>Search</button>
+      </div>
+      <div class="buttons">
+        <button class="explore-btn">Explore</button>
+        <button class="learn-btn">Learn More</button>
+      </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/hero-image.png') }}" alt="Travel Visual" />
+  </div>
+
+  <div class="section" id="home-features">
+    <h2 class="highlight">Features</h2>
+    <div class="features-grid">
+      {% for feature in features %}
+      <div class="feature">
+        <h3>{{ feature }}</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="section" id="home-steps">
+    <h2 class="highlight">How It Works</h2>
+    <div class="steps-grid">
+      {% for step in steps %}
+      <div class="step">
+        <h3>{{ step }}</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <footer>
+    © 2025 TrippyPick | <a href="#">Privacy</a> | <a href="#">Terms</a>
+  </footer>
+</section>
+{% endblock %}
