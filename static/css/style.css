@@ -23,6 +23,16 @@ button {
   padding: 60px 80px;
 }
 
+nav {
+  background: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
+  backdrop-filter: blur(10px); /* Adds glass-like effect */
+  transition: background 0.3s ease;
+}
+
+nav:hover {
+  background: rgba(255, 255, 255, 1); /* Fully opaque on hover */
+}
+
 /* ======================
    Home Page Styles
 ====================== */
@@ -225,6 +235,9 @@ nav a {
   border-radius: 0 6px 6px 0;
   cursor: pointer;
 }
+#home-page .search-bar {
+  margin-top: 60px; /* increase from 20px to 40px */
+}
 
 #home-page .buttons {
   margin-top: 20px;
@@ -290,9 +303,127 @@ nav a {
 }
 
 #home-page .highlight {
-  color: #9b5de5;
+  color: #000000;
+  font-size: 36px;
   font-weight: 600;
 }
+
+#home-features .subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.feature {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transform: translateY(-5px);
+}
+
+.feature h3 {
+  margin: 15px 0 10px;
+  font-size: 20px;
+}
+
+.feature p {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.icon.blue { background: #dbeafe; color: #2563eb; }
+.icon.purple { background: #ede9fe; color: #7c3aed; }
+.icon.green { background: #dcfce7; color: #16a34a; }
+.icon.orange { background: #fff7ed; color: #f97316; }
+.icon.red { background: #fee2e2; color: #dc2626; }
+
+
+
+
+/* How It Works Section */
+#home-steps {
+  text-align: center;
+}
+
+#home-steps .steps-badge {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #333;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+#home-steps h2 {
+  font-size: 28px;
+  margin-bottom: 40px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.step {
+  text-align: center;
+}
+
+.step-circle {
+  width: 50px;
+  height: 50px;
+  background: black;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0 auto 15px;
+}
+
+.step h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.step p {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 
 
 /* ======================

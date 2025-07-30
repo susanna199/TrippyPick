@@ -4,21 +4,59 @@ app = Flask(__name__)
 
 @app.route('/')
 @app.route('/home')
+
 def home():
     features = [
-        "Instagram Integration",
-        "Smart Filtering",
-        "Data Analytics",
-        "AI-Powered Matching",
-        "Verified Packages",
-        "Real-time Updates"
+        {
+            "title": "Instagram Integration",
+            "description": "Automatically aggregates travel packages from Instagram using advanced scraping and NLP technology.",
+            "icon": "fa-globe",
+            "color": "blue"
+        },
+        {
+            "title": "Smart Filtering",
+            "description": "Use intelligent filters to find packages that match your budget, preferences, and travel style.",
+            "icon": "fa-filter",
+            "color": "purple"
+        },
+        {
+            "title": "Data Analytics",
+            "description": "Get insights on pricing trends, popular destinations, and package comparisons with visual analytics.",
+            "icon": "fa-chart-line",
+            "color": "green"
+        },
+        {
+            "title": "AI-Powered Matching",
+            "description": "Our NLP algorithms understand your preferences and recommend the most suitable travel packages.",
+            "icon": "fa-bolt",
+            "color": "orange"
+        },
+        {
+            "title": "Verified Packages",
+            "description": "All packages are verified and analyzed for authenticity, pricing accuracy, and quality assurance.",
+            "icon": "fa-shield-alt",
+            "color": "red"
+        },
+        {
+            "title": "Real-time Updates",
+            "description": "Stay updated with the latest packages, price changes, and availability in real-time.",
+            "icon": "fa-sync-alt",
+            "color": "purple"
+        }
     ]
+
     steps = [
-        "Search & Filter",
-        "Compare & Analyze",
-        "Book & Enjoy"
+        {"title": "Search & Filter", "description": "Find packages using smart filters and preferences.", "icon": "fa-search"},
+        {"title": "Compare & Analyze", "description": "Analyze pricing, features, and destinations easily.", "icon": "fa-chart-bar"},
+        {"title": "Book & Enjoy", "description": "Book your chosen package securely and start your trip.", "icon": "fa-suitcase-rolling"}
     ]
-    return render_template("home.html", title="Discover Your Perfect Travel Package", features=features, steps=steps)
+
+    return render_template(
+        "home.html",
+        title="Discover Your Perfect Travel Package",
+        features=features,
+        steps=steps
+    )
 
 @app.route('/browse')
 def browse():
