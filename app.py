@@ -1,10 +1,32 @@
+import os
+from dotenv import load_dotenv
+from supabase import create_client
 from flask import Flask, render_template
+
+# Load environment variables from .env file
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# Create Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/home')
+# Testing backend connectivity
+@app.route('/test')
+def test():
+    # Fetch data from packages table
+    response = supabase.table('packages').select('*').execute()
+    
+    # Print in terminal
+    print("Supabase packages table data:", response.data)
+    
+    # Return JSON to browser
+    return {"packages": response.data}
 
+@app.route('/home')
 def home():
     features = [
         {

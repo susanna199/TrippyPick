@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Test</title>
+</head>
+<body>
+    <h1>Packages</h1>
+    <ul>
+        {% for pkg in packages %}
+            <li>{{ pkg.package_name }} - {{ pkg.destination }} - {{ pkg.cost_per_package }}</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Itinerary</h1>
+    <ul>
+        {% for item in itinery %}
+            <li>Package ID {{ item.package_id }} - Day {{ item.day_number }} - {{ item.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
