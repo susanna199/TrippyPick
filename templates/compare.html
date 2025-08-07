@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Compare Packages | TrippyPick{% endblock %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/compare.css') }}">
+{% endblock %}
+
+
 {% block content %}
 <section id="compare-page">
   <div class="compare-header">
@@ -8,51 +14,131 @@
     <p>Compare up to 3 travel packages side by side</p>
   </div>
 
+  {# --- TOP COMPARISON GRID --- #}
   <div class="compare-grid">
-    {% for i in range(3) %}
-      {% if packages[i] is defined %}
+    {% for pkg in packages %}
+      {% if pkg %}
       <div class="compare-card">
-        <div class="rank-badge">#{{ i + 1 }}</div>
-        <div class="image-placeholder">🖼️</div>
-        <h3>{{ packages[i].title }}</h3>
-        <p class="location">📍 {{ packages[i].location }}</p>
-        <div class="price">
-          <span class="current">${{ packages[i].price }}</span>
-          <span class="original">${{ packages[i].original_price }}</span>
-          <span class="per-person">per person</span>
-        </div>
-        <p class="duration">📅 {{ packages[i].duration }}</p>
-        <p class="rating">⭐ {{ packages[i].rating }} <span>({{ packages[i].reviews }} reviews)</span></p>
-        <p class="group">👥 Max {{ packages[i].group_size }}</p>
-        <p class="difficulty">Difficulty: <span class="tag {{ packages[i].difficulty|lower }}">{{ packages[i].difficulty }}</span></p>
+        
+        <a href="#" class="btn-remove" data-package-id-remove="{{ pkg.package_id }}" title="Remove from comparison">&times;</a>
 
-        <div class="tag-row">
-          {% for tag in packages[i].tags %}
-            <span class="tag highlight">{{ tag }}</span>
-          {% endfor %}
-        </div>
+        <div class="card-content">
+            <div class="image-placeholder">
+              {{ pkg.destination_img }}
+              <!-- {% if pkg.image_url %}
+                <img src="{{ pkg.image_url }}" alt="{{ pkg.title }}">
+              {% else %}
+                <span>🖼️</span>
+              {% endif %} -->
+            </div>
+            <h3>{{ pkg.title }}</h3>
+            <p class="location">📍 {{ pkg.location }}</p>
+            <div class="price">
+              <span class="current">${{ pkg.price }}</span>
+              {% if pkg.original_price %}<span class="original">${{ pkg.original_price }}</span>{% endif %}
+              <span class="per-person">per person</span>
+            </div>
+            <p class="duration">📅 {{ pkg.duration }}</p>
+            <p class="rating">⭐ {{ pkg.rating }} <span>({{ pkg.reviews }} reviews)</span></p>
+            <p class="group">👥 Max {{ pkg.group_size }}</p>
+            <p class="difficulty">Difficulty: <span class="tag {{ pkg.difficulty|lower }}">{{ pkg.difficulty }}</span></p>
 
-        <div class="includes">
-          <h4>What's Included</h4>
-          <ul>
-            {% for item in packages[i].included %}
-              <li>✔️ {{ item }}</li>
-            {% endfor %}
-          </ul>
-        </div>
+            <div class="tag-row">
+              {% for tag in pkg.tags %}<span class="tag highlight">{{ tag }}</span>{% endfor %}
+            </div>
 
-        <p class="provider">Provider<br><strong>@{{ packages[i].provider }}</strong></p>
+            <div class="includes">
+              <h4>What's Included</h4>
+              <ul>
+                {% for item in pkg.included %}<li>✔️ {{ item }}</li>{% endfor %}
+              </ul>
+            </div>
+            <p class="provider">Provider<br><strong>@{{ pkg.provider }}</strong></p>
+        </div>
+        <div class="card-actions">
+            <button class="btn-details">View Details</button>
+            <button class="btn-book">Book Now</button>
+        </div>
       </div>
       {% else %}
       <div class="compare-card empty">
         <div class="add-package">
           <div class="plus-icon">+</div>
-          <p>Add Package</p>
-          <small>Compare up to 3 packages</small>
+          <p>Add Package to Compare</p>
         </div>
       </div>
       {% endif %}
     {% endfor %}
   </div>
+
+  {# --- QUICK COMPARISON TABLE --- #}
+  {% if packages[0] and packages[1] %}
+  <div class="quick-comparison">
+    <h2>Quick Comparison</h2>
+    <p class="subtitle">Key differences at a glance</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                {% for pkg in packages %}{% if pkg %}<th>{{ pkg.title }}</th>{% endif %}{% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Best Price</td>
+                {% for pkg in packages %}{% if pkg %}
+                <td>
+                    ${{ pkg.price }}
+                    {% if pkg.is_best_price %}<span class="best-badge">Best</span>{% endif %}
+                </td>
+                {% endif %}{% endfor %}
+            </tr>
+            <tr>
+                <td>Highest Rated</td>
+                {% for pkg in packages %}{% if pkg %}
+                <td>
+                    {{ pkg.rating }}★
+                    {% if pkg.is_highest_rated %}<span class="best-badge">Best</span>{% endif %}
+                </td>
+                {% endif %}{% endfor %}
+            </tr>
+            <tr>
+                <td>Value Score</td>
+                {% for pkg in packages %}{% if pkg %}<td>{{ pkg.value_score }}</td>{% endif %}{% endfor %}
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {# --- ADD MORE PACKAGES SECTION --- #}
+  <div class="add-more-packages">
+      <h2>Add More Packages</h2>
+      <div class="search-bar">
+          <input type="text" placeholder="🔍 Search packages...">
+      </div>
+      <div class="add-grid">
+          {# This is the loop that renders the packages to add #}
+          {% for pkg_to_add in packages_to_add %}
+          <div class="add-card">
+              <div class="add-card-image">
+                  {% if pkg_to_add.image_url %}<img src="{{ pkg_to_add.image_url }}" alt="{{ pkg_to_add.title }}">{% else %}<span>🖼️</span>{% endif %}
+              </div>
+              <div class="add-card-info">
+                  <h4>{{ pkg_to_add.title }}</h4>
+                  <p>{{ pkg_to_add.location }}</p>
+                  <div class="add-card-price">
+                      <strong>${{ pkg_to_add.price }}</strong>
+                      {% if pkg_to_add.original_price %}<span class="original">${{ pkg_to_add.original_price }}</span>{% endif %}
+                  </div>
+              </div>
+              <button class="btn-add" data-package-id-add="{{ pkg_to_add.package_id }}">+ Add</button>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+
 </section>
+
+<script src="{{ url_for('static', filename='js/compare.js') }}"></script>
 {% endblock %}
