@@ -28,7 +28,9 @@
             <div class="image-placeholder">
                 {# FINAL WORKING VERSION: url_for() now works because app.py is fixed #}
                 {% if package.destination_img %}
-                    <img src="{{ url_for('static', filename=package.destination_img.replace('static/', '')) }}" alt=" ">
+                    <!-- <img src="{{ url_for('static', filename=package.destination_img.replace('static/', '')) }}" alt=" "> -->
+                    <img src="{{ url_for('static', filename=package.destination_img) }}" alt=" ">
+
                 {% else %}
                     🏔️
                 {% endif %}
