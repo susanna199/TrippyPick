@@ -24,24 +24,22 @@
 
         <div class="card-content">
             <div class="image-placeholder">
-              {{ pkg.destination_img }}
-              <!-- {% if pkg.image_url %}
-                <img src="{{ pkg.image_url }}" alt="{{ pkg.title }}">
+              {# --- THIS SECTION IS CORRECTED --- #}
+              {% if pkg.image_url %}
+                <img src="{{ url_for('static', filename=pkg.image_url.replace('static/', '')) }}" alt="{{ pkg.title }}" style="width:100%; height:100%; object-fit: cover; border-radius: 10px;">
               {% else %}
                 <span>🖼️</span>
-              {% endif %} -->
+              {% endif %}
             </div>
             <h3>{{ pkg.title }}</h3>
             <p class="location">📍 {{ pkg.location }}</p>
             <div class="price">
-              <span class="current">${{ pkg.price }}</span>
-              {% if pkg.original_price %}<span class="original">${{ pkg.original_price }}</span>{% endif %}
+              <span class="current">₹{{ "{:,.0f}".format(pkg.price) }}</span>
               <span class="per-person">per person</span>
             </div>
             <p class="duration">📅 {{ pkg.duration }}</p>
             <p class="rating">⭐ {{ pkg.rating }} <span>({{ pkg.reviews }} reviews)</span></p>
             <p class="group">👥 Max {{ pkg.group_size }}</p>
-            <p class="difficulty">Difficulty: <span class="tag {{ pkg.difficulty|lower }}">{{ pkg.difficulty }}</span></p>
 
             <div class="tag-row">
               {% for tag in pkg.tags %}<span class="tag highlight">{{ tag }}</span>{% endfor %}
@@ -56,7 +54,8 @@
             <p class="provider">Provider<br><strong>@{{ pkg.provider }}</strong></p>
         </div>
         <div class="card-actions">
-            <button class="btn-details">View Details</button>
+            <button class="btn-details"><a href="{{ url_for('package_detail', package_id=pkg.package_id) }}" class="details-btn">View Details</a>
+            </button>
             <button class="btn-book">Book Now</button>
         </div>
       </div>
@@ -88,7 +87,7 @@
                 <td>Best Price</td>
                 {% for pkg in packages %}{% if pkg %}
                 <td>
-                    ${{ pkg.price }}
+                    ₹{{ "{:,.0f}".format(pkg.price) }}
                     {% if pkg.is_best_price %}<span class="best-badge">Best</span>{% endif %}
                 </td>
                 {% endif %}{% endfor %}
@@ -115,21 +114,24 @@
   <div class="add-more-packages">
       <h2>Add More Packages</h2>
       <div class="search-bar">
-          <input type="text" placeholder="🔍 Search packages...">
+          <input type="text" placeholder="Search packages by destination...">
       </div>
       <div class="add-grid">
-          {# This is the loop that renders the packages to add #}
           {% for pkg_to_add in packages_to_add %}
           <div class="add-card">
               <div class="add-card-image">
-                  {% if pkg_to_add.image_url %}<img src="{{ pkg_to_add.image_url }}" alt="{{ pkg_to_add.title }}">{% else %}<span>🖼️</span>{% endif %}
+                  {# --- THIS SECTION IS CORRECTED --- #}
+                  {% if pkg_to_add.image_url %}
+                    <img src="{{ url_for('static', filename=pkg_to_add.image_url.replace('static/', '')) }}" alt="{{ pkg_to_add.title }}">
+                  {% else %}
+                    <span>🖼️</span>
+                  {% endif %}
               </div>
               <div class="add-card-info">
                   <h4>{{ pkg_to_add.title }}</h4>
                   <p>{{ pkg_to_add.location }}</p>
                   <div class="add-card-price">
-                      <strong>${{ pkg_to_add.price }}</strong>
-                      {% if pkg_to_add.original_price %}<span class="original">${{ pkg_to_add.original_price }}</span>{% endif %}
+                      <strong>₹{{ "{:,.0f}".format(pkg_to_add.price) }}</strong>
                   </div>
               </div>
               <button class="btn-add" data-package-id-add="{{ pkg_to_add.package_id }}">+ Add</button>

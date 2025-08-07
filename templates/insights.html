@@ -1,142 +1,136 @@
-<!-- templates/insights.html -->
 {% extends "base.html" %}
 {% block title %}Insights | TrippyPick{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="insights-container">
-  <div class="insights-header">
-    <h1>Travel Insights</h1>
-    <p>Data-driven insights into travel trends and pricing</p>
-  </div>
+<div id="insights-page">
+  <div class="insights-container">
+    <div class="insights-header">
+      <h1>Travel Insights</h1>
+      <p>Data-driven insights into travel trends and pricing</p>
+    </div>
 
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <small>Total Packages</small>
-      <h2>2,847</h2>
-      <p class="kpi-change positive">+12.5% from last month</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <small>Total Packages</small>
+        <h2>{{ "{:,.0f}".format(kpis.total_packages) }}</h2>
+      </div>
+      <div class="kpi-card">
+        <small>Avg Package Price</small>
+        <h2>₹{{ "{:,.0f}".format(kpis.avg_price) }}</h2>
+      </div>
+      <div class="kpi-card">
+        <small>Active Providers</small>
+        <h2>{{ kpis.total_agencies }}</h2>
+      </div>
+      <div class="kpi-card">
+        <small>Avg Rating</small>
+        <h2>{{ "%.1f"|format(kpis.avg_rating) }} ★</h2>
+      </div>
     </div>
-    <div class="kpi-card">
-      <small>Avg Package Price</small>
-      <h2>$1,847</h2>
-      <p class="kpi-change negative">-3.2% from last month</p>
-    </div>
-    <div class="kpi-card">
-      <small>Active Providers</small>
-      <h2>342</h2>
-      <p class="kpi-change positive">+4.7% from last month</p>
-    </div>
-    <div class="kpi-card">
-      <small>Avg Rating</small>
-      <h2>4.3 ★</h2>
-      <p class="kpi-change positive">+0.1 since June</p>
-    </div>
-  </div>
 
-  <div class="insights-tabs">
-    <button class="active">Destinations</button>
-    <button>Pricing</button>
-    <button>Seasonal</button>
-    <button>Providers</button>
-  </div>
+    <div class="insights-tabs">
+      <button class="tab-link active" data-tab="destinations">Destinations</button>
+      <button class="tab-link" data-tab="pricing">Pricing</button>
+    </div>
 
-  <div class="insights-section">
-    <div class="card">
-      <h3>Trending Destinations</h3>
-      <p class="subtitle">Top picks based on package frequency</p>
-      <ul class="trending-list">
-        <li class="trending-item">
-          <div class="trending-left">
-            <div class="trending-rank">1</div>
-            <div class="trending-details">
-              <span>Paris</span>
-              <small>+8.4%</small>
+    {# --- Tab Content Panes --- #}
+    <div id="destinations" class="tab-pane active">
+      <div class="insights-section">
+        <div class="card">
+          <h3>Trending Destinations</h3>
+          <p class="subtitle">Top picks based on package frequency</p>
+          <ul class="trending-list">
+            {% for dest, count in trending_destinations %}
+            <li class="trending-item">
+              <div class="trending-left">
+                <div class="trending-rank">{{ loop.index }}</div>
+                <div class="trending-details"><span>{{ dest }}</span></div>
+              </div>
+              <div class="trending-right"><span>{{ count }} packages</span></div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Popular Categories</h3>
+          <p class="subtitle">Distribution of packages by destination type</p>
+          {% for category in popular_categories %}
+          <div class="category-row">
+            <div class="category-info">
+              <div class="category-name">{{ category.name }}</div>
+              <div class="category-count">{{ category.count }} packages</div>
+            </div>
+            <div class="category-chart">
+              <div class="category-bar-container">
+                <div class="category-bar" style="width: {{ category.percentage }}%;"></div>
+              </div>
+              <div class="category-percent">{{ category.percentage }}%</div>
             </div>
           </div>
-          <div class="trending-right">
-            <span>548 packages</span>
-          </div>
-        </li>
-        <li class="trending-item">
-          <div class="trending-left">
-            <div class="trending-rank">2</div>
-            <div class="trending-details">
-              <span>Bali</span>
-              <small>+6.9%</small>
-            </div>
-          </div>
-          <div class="trending-right">
-            <span>472 packages</span>
-          </div>
-        </li>
-        <li class="trending-item">
-          <div class="trending-left">
-            <div class="trending-rank">3</div>
-            <div class="trending-details">
-              <span>Dubai</span>
-              <small>+5.2%</small>
-            </div>
-          </div>
-          <div class="trending-right">
-            <span>429 packages</span>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h3>Popular Categories</h3>
-      <p class="subtitle">Types of travel most booked</p>
-      <div class="category-row">
-        <div>Adventure</div>
-        <div style="width: 65%">
-          <div class="category-bar"></div>
+          {% endfor %}
         </div>
       </div>
-      <div class="category-row">
-        <div>Luxury</div>
-        <div style="width: 50%">
-          <div class="category-bar"></div>
-        </div>
-      </div>
-      <div class="category-row">
-        <div>Family</div>
-        <div style="width: 45%">
-          <div class="category-bar"></div>
-        </div>
-      </div>
-      <div class="category-row">
-        <div>Honeymoon</div>
-        <div style="width: 35%">
-          <div class="category-bar"></div>
+      <div class="card">
+        <h3>Regional Distribution</h3>
+        <p class="subtitle">Package distribution across different regions</p>
+        <div class="regional-grid">
+          {% for region in regional_distribution %}
+          <div class="region-bubble">
+            <div class="region-count region-{{ region.name.lower().replace(' ', '-') }}">{{ region.count }}</div>
+            <span>{{ region.name }}</span>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h3>Regional Distribution</h3>
-    <p class="subtitle">Packages across major regions</p>
-    <div class="regional-grid">
-      <div class="region-bubble">
-        <div class="region-count region-asia">1,204</div>
-        <span>Asia</span>
-        <div class="region-growth">+8%</div>
-      </div>
-      <div class="region-bubble">
-        <div class="region-count region-europe">980</div>
-        <span>Europe</span>
-        <div class="region-growth">+5%</div>
-      </div>
-      <div class="region-bubble">
-        <div class="region-count region-americas">678</div>
-        <span>Americas</span>
-        <div class="region-growth">+6%</div>
-      </div>
-      <div class="region-bubble">
-        <div class="region-count region-oceania">423</div>
-        <span>Oceania</span>
-        <div class="region-growth">+3%</div>
+    <div id="pricing" class="tab-pane">
+      <div class="insights-section">
+        <div class="card">
+          <h3>Price Analysis by Category</h3>
+          <p class="subtitle">Average prices across different travel categories</p>
+          <div class="price-analysis-list">
+            {% for item in price_analysis %}
+            <div class="price-analysis-item">
+              <div class="price-analysis-info">
+                <div class="category-name">{{ item.name }}</div>
+                <div class="package-count">{{ item.count }} packages</div>
+              </div>
+              <div class="price-analysis-value">
+                <div class="avg-price">₹{{ "{:,.0f}".format(item.avg_price) }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="card">
+          <h3>Price Distribution</h3>
+          <p class="subtitle">How packages are distributed across price ranges</p>
+           <div class="price-distribution-list">
+             {% for bin in price_distribution %}
+             <div class="price-distribution-item">
+               <div class="dist-header">
+                 <span class="dist-label">{{ bin.label }}</span>
+                 <span class="dist-count">{{ bin.count }} packages</span>
+               </div>
+               <div class="category-bar-container">
+                 <div class="category-bar" style="width: {{ bin.percentage }}%;"></div>
+               </div>
+               <div class="dist-footer">
+                 <span class="dist-percent">{{ bin.percentage }}%</span>
+               </div>
+             </div>
+             {% endfor %}
+           </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<script src="{{ url_for('static', filename='js/insights.js') }}"></script>
 {% endblock %}

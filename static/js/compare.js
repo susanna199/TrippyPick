@@ -10,22 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const packageIdToAdd = button.dataset.packageIdAdd;
 
-            // Check if the package is already being compared
             if (existingIds.includes(packageIdToAdd)) {
                 alert('This package is already in the comparison.');
                 return;
             }
 
-            // Check if there is space to add a new package
             if (existingIds.length >= 3) {
                 alert('You can only compare up to 3 packages. Please remove one first.');
                 return;
             }
 
-            // Add the new ID and reload the page
             const newIds = [...existingIds, packageIdToAdd];
             params.set('ids', newIds.join(','));
-            // CORRECTED LINE
             window.location.href = `${currentUrl.pathname}?${params.toString()}`;
         });
     });
@@ -37,20 +33,40 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const packageIdToRemove = button.dataset.packageIdRemove;
 
-            // Filter out the ID to be removed
             const newIds = existingIds.filter(id => id !== packageIdToRemove);
 
-            // Update the URL parameter
             if (newIds.length > 0) {
                 params.set('ids', newIds.join(','));
             } else {
-                // If no IDs are left, remove the parameter entirely
                 params.delete('ids');
             }
             
-            // Reload the page with the updated URL
-            // CORRECTED LINE
             window.location.href = `${currentUrl.pathname}?${params.toString()}`;
         });
     });
+
+    // --- NEW: Handle SEARCH filtering ---
+    const searchInput = document.querySelector('.search-bar input');
+    const packageCards = document.querySelectorAll('.add-grid .add-card');
+
+    if (searchInput && packageCards.length > 0) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            packageCards.forEach(card => {
+                const titleElement = card.querySelector('h4');
+                const locationElement = card.querySelector('p');
+
+                const title = titleElement ? titleElement.textContent.toLowerCase() : '';
+                const location = locationElement ? locationElement.textContent.toLowerCase() : '';
+
+                // Show the card if the search term is found in the title or location
+                if (title.includes(searchTerm) || location.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
 });

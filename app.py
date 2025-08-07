@@ -84,17 +84,44 @@ def browse():
         'package_id, package_name, destination, cost_per_package, themes, destination_img, days, nights'
     ).execute()
     packages = response.data if response.data else []
+    # 🧹 Clean the destination_img paths
+    for pkg in packages:
+        if pkg.get("destination_img", "").startswith("static/"):
+            pkg["destination_img"] = pkg["destination_img"].replace("static/", "", 1).strip()
+
     return render_template("browse.html", packages=packages)
 
+# @app.route('/package/<int:package_id>')
+# def package_detail(package_id):
+#     # (Your package_detail function remains here)
+#     response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
+#     if not response.data:
+#         return "Package not found", 404
+#     package = response.data
+#     return render_template("package_detail.html", package=package)
 
 @app.route('/package/<int:package_id>')
 def package_detail(package_id):
-    # (Your package_detail function remains here)
-    response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
-    if not response.data:
+    # --- THIS QUERY IS NOW REVERTED ---
+    # It fetches only from the 'packages' table to avoid the join error.
+    pkg_response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
+    
+    # If the package doesn't exist, show a 404 error
+    if not pkg_response.data:
         return "Package not found", 404
-    package = response.data
-    return render_template("package_detail.html", package=package)
+    package = pkg_response.data
+
+    # Fetch the related itinerary for that package
+    itinerary_response = supabase.table('itinerary').select('*').eq('package_id', package_id).execute()
+    itinerary = itinerary_response.data if itinerary_response.data else []
+
+    # Pass both package and itinerary to the template
+    return render_template(
+        "package_detail.html", 
+        package=package,
+        itinerary=itinerary
+    )
+
 
 # --- NEW ROUTE TO MANUALLY SERVE IMAGES ---
 @app.route('/static/images/<filename>')
@@ -104,8 +131,7 @@ def serve_image(filename):
     image_dir = os.path.join(project_root, 'static', 'images')
     return send_from_directory(image_dir, filename)
 
-# --- Helper Functions ---
-# Your original helper functions are preserved
+
 def calculate_value_score(package):
     """
     Calculates a 'Value Score' for a package.
@@ -131,39 +157,47 @@ def calculate_value_score(package):
     except (ValueError, TypeError, ZeroDivisionError):
         return 0.0
 
+# In your app.py, replace the entire /compare route and its helper function
+# with the code below.
 
 def transform_package_data(db_package):
     """
     Transforms a single package object from Supabase DB schema 
     to the structure expected by the Jinja template.
     """
-    # The JOIN is still useful for getting rating/review data from the agency table
     agency_data = db_package.get('agency', {}) or {} 
+
+    themes_str = db_package.get('themes', '')
+    themes_list = []
+    if themes_str and themes_str.startswith('[') and themes_str.endswith(']'):
+        cleaned_str = themes_str.strip("[]").replace("'", "")
+        themes_list = [theme.strip() for theme in cleaned_str.split(',') if theme.strip()]
+
+    highlights_list = [tag.strip() for tag in db_package.get('highlights', '').split(',') if tag.strip()]
+    
+    # Combine themes and highlights for the tags
+    combined_tags = list(dict.fromkeys(themes_list + highlights_list))
 
     transformed = {
         "package_id": db_package.get('package_id'),
         "title": db_package.get('package_name', 'N/A'),
         "location": db_package.get('destination', 'N/A'),
         "price": db_package.get('cost_per_package', 0),
-        "original_price": db_package.get('original_cost'),
+        # "original_price" has been removed to prevent the error
         "duration_days": db_package.get('days', 0),
         "duration": f"{db_package.get('days', 0)} days, {db_package.get('nights', 0)} nights",
         "rating": agency_data.get('avg_rating', 0),
         "reviews": agency_data.get('total_review_count', 0),
         "group_size": db_package.get('group_size', 0),
-        "difficulty": db_package.get('difficulty', 'N/A'),
-        "image_url": db_package.get('image_url', ''),
-        "tags": [tag.strip() for tag in db_package.get('highlights', '').split(',') if tag.strip()],
+        "image_url": db_package.get('destination_img', ''), 
+        "tags": combined_tags,
         "included": [item.strip() for item in db_package.get('inclusions_detailed', '').split(',') if item.strip()],
-        # Get agency_name directly from the package data, which is more reliable.
         "provider": db_package.get('agency_name', 'N/A')
     }
-    # Calculate and add value score
     transformed['value_score'] = calculate_value_score(transformed)
     return transformed
 
-# --- Main Flask Route ---
-# Your original /compare route with all its Supabase logic is preserved
+
 @app.route('/compare')
 def compare():
     package_ids_str = request.args.get('ids', '')
@@ -174,10 +208,8 @@ def compare():
         except (ValueError, TypeError):
             package_ids = []
     
-    # --- 1. Fetch and process packages for the main comparison view ---
     packages_in_comparison = []
     if package_ids:
-        # The select query still joins with 'agency' to get review/rating data
         response = supabase.table('packages') \
             .select('*, agency:agency_id(*)') \
             .in_('package_id', package_ids) \
@@ -188,43 +220,34 @@ def compare():
                 if pid in db_packages_map:
                     packages_in_comparison.append(transform_package_data(db_packages_map[pid]))
 
-    # --- 2. Analyze the compared packages to find the "best" for the summary table ---
     if len(packages_in_comparison) > 1:
-        # Find best price (lowest)
         best_price_package = min(packages_in_comparison, key=lambda p: p['price'])
         best_price_package['is_best_price'] = True
-        
-        # Find highest rating
         best_rating_package = max(packages_in_comparison, key=lambda p: p['rating'])
         best_rating_package['is_highest_rated'] = True
 
-    # Pad with None to ensure 3 slots are always available for the template
     padded_packages = packages_in_comparison[:]
     while len(padded_packages) < 3:
         padded_packages.append(None)
         
-    # --- 3. Fetch a list of other packages to show in the "Add More" section ---
     packages_to_add = []
-    # --- MODIFICATION: ALWAYS FETCH 3 PACKAGES TO ADD ---
-    # Create a query to get up to 3 other packages
-    query = supabase.table('packages').select('*').limit(3)
+    # The query has been corrected to remove 'original_cost'
+    query = supabase.table('packages').select('package_id, package_name, destination, cost_per_package, destination_img').limit(3)
     
-    # Exclude the ones already being compared
     if package_ids:
         query = query.not_.in_('package_id', package_ids)
     
     response_to_add = query.execute()
-
+    
     if response_to_add.data:
-        # We only need a subset of data for the small "add" cards
         for pkg in response_to_add.data:
             packages_to_add.append({
                 "package_id": pkg.get('package_id'),
                 "title": pkg.get('package_name'),
                 "location": pkg.get('destination'),
                 "price": pkg.get('cost_per_package'),
-                "original_price": pkg.get('original_cost'),
-                "image_url": pkg.get('image_url'),
+                # "original_price" has been removed to prevent the error
+                "image_url": pkg.get('destination_img'),
             })
 
     return render_template(
@@ -233,9 +256,155 @@ def compare():
         packages_to_add=packages_to_add
     )
 
+
+# Add these imports at the top of your app.py file
+from collections import Counter, defaultdict
+import re
+# The opencage import has been removed
+
 @app.route('/insights')
 def insights():
-    return render_template('insights.html')
+    # --- 1. KPI Calculations (Existing Logic) ---
+    pkg_count_response = supabase.table('packages').select('package_id', count='exact').execute()
+    total_packages = pkg_count_response.count if hasattr(pkg_count_response, 'count') else 0
+
+    price_response = supabase.table('packages').select('cost_per_package').execute()
+    avg_price = 0
+    if price_response.data:
+        prices = [p['cost_per_package'] for p in price_response.data if p.get('cost_per_package') is not None]
+        if prices:
+            avg_price = sum(prices) / len(prices)
+
+    agency_count_response = supabase.table('agency').select('agency_id', count='exact').execute()
+    total_agencies = agency_count_response.count if hasattr(agency_count_response, 'count') else 0
+
+    rating_response = supabase.table('agency').select('avg_rating').execute()
+    avg_rating = 0
+    if rating_response.data:
+        ratings = [a['avg_rating'] for a in rating_response.data if a.get('avg_rating') is not None]
+        if ratings:
+            avg_rating = sum(ratings) / len(ratings)
+
+    kpi_data = {
+        "total_packages": total_packages,
+        "avg_price": avg_price,
+        "total_agencies": total_agencies,
+        "avg_rating": avg_rating
+    }
+
+    # --- 2. Fetch all necessary data in one go ---
+    all_packages_response = supabase.table('packages').select('destination, themes, cost_per_package').execute()
+    all_packages = all_packages_response.data if all_packages_response.data else []
+
+    # --- 3. Trending Destinations (Existing Logic) ---
+    destination_counts = Counter(pkg['destination'] for pkg in all_packages if pkg.get('destination'))
+    top_destinations = destination_counts.most_common(3)
+
+    # --- 4. Popular Categories with Custom Grouping (Existing Logic) ---
+    category_map = {
+        'Mountain Adventures': ['Adventure & Trekking', 'Camping & Nature'],
+        'Wildlife and Nature': ['Camping & Nature', 'Wildlife & Forests'],
+        'Cultural Tours': ['Heritage & Cultural'],
+        'Beaches': ['Beaches & Coastal'],
+        'Budget Friendly': ['Backpacking & Budget']
+    }
+    category_packages = defaultdict(set)
+    for i, pkg in enumerate(all_packages):
+        themes_str = pkg.get('themes', '[]')
+        found_themes = re.findall(r"'(.*?)'", themes_str)
+        for category, keywords in category_map.items():
+            if any(keyword in found_themes for keyword in keywords):
+                category_packages[category].add(i)
+        price = pkg.get('cost_per_package')
+        if price is not None and price > 10000:
+            category_packages['Luxury Experience'].add(i)
+    
+    popular_categories = []
+    if total_packages > 0:
+        for category, packages_set in category_packages.items():
+            count = len(packages_set)
+            percentage = (count / total_packages) * 100
+            popular_categories.append({"name": category, "count": count, "percentage": round(percentage)})
+    popular_categories.sort(key=lambda x: x['count'], reverse=True)
+
+    # --- 5. REVERTED: Rule-Based Regional Distribution ---
+    destination_to_state_map = {
+        # Karnataka
+        'Hampi': 'Karnataka', 'Gokarna': 'Karnataka', 'Coorg': 'Karnataka', 
+        'Chikmagalur': 'Karnataka', 'Agumbe': 'Karnataka', 'Dandeli': 'Karnataka',
+        'Nethravati': 'Karnataka', 'Sakleshpur': 'Karnataka', 'Udupi': 'Karnataka',
+        'Chikamagluru': 'Karnataka',
+
+        # Kerala
+        'Wayanad': 'Kerala', 'Munnar': 'Kerala', 'Alleppey': 'Kerala', 
+        'Kochi': 'Kerala', 'Kerala Circuit': 'Kerala', 'Paithalama': 'Kerala',
+        'Varkala': 'Kerala',
+
+        # Tamil Nadu
+        'Ooty': 'Tamil Nadu', 'Kodaikanal': 'Tamil Nadu', 'Pondicherry': 'Tamil Nadu',
+        'Coonoor': 'Tamil Nadu', 'Valparai': 'Tamil Nadu', 'Yelagiri': 'Tamil Nadu',
+
+        # Goa
+        'Goa': 'Goa', 'Dhudhsagar Trek': 'Goa',
+        
+        # Other States
+        'Gandikota': 'Andhra Pradesh'
+    }
+    regional_counts = Counter()
+    for pkg in all_packages:
+        destination = pkg.get('destination')
+        if destination in destination_to_state_map:
+            state = destination_to_state_map[destination]
+            regional_counts[state] += 1
+        elif destination: # If destination exists but is not in the map
+            regional_counts['Other'] += 1
+            
+    # The total of regional_counts.values() will now equal total_packages
+    
+    # Format for the template, focusing on the states you requested
+    target_states = ['Karnataka', 'Kerala', 'Tamil Nadu', 'Goa']
+    regional_distribution = [{"name": state, "count": regional_counts.get(state, 0)} for state in target_states]
+
+
+    # --- 6. Price Analysis and Distribution (Existing Logic) ---
+    price_analysis = []
+    for category, packages_set in category_packages.items():
+        prices = [all_packages[i]['cost_per_package'] for i in packages_set if all_packages[i].get('cost_per_package') is not None]
+        if prices:
+            avg_cat_price = sum(prices) / len(prices)
+            price_analysis.append({"name": category, "avg_price": round(avg_cat_price), "count": len(prices)})
+    price_analysis.sort(key=lambda x: x['avg_price'], reverse=True)
+
+    price_bins = {
+        "₹1,000 - ₹4,000": (1000, 4000), "₹4,000 - ₹8,000": (4000, 8000),
+        "₹8,000 - ₹10,000": (8000, 10000), "₹10,000+": (10000, float('inf'))
+    }
+    bin_counts = Counter()
+    for pkg in all_packages:
+        price = pkg.get('cost_per_package')
+        if price is not None:
+            for label, (lower, upper) in price_bins.items():
+                if lower <= price < upper:
+                    bin_counts[label] += 1
+                    break
+    
+    price_distribution = []
+    total_priced_packages = sum(bin_counts.values())
+    if total_priced_packages > 0:
+        for label, (lower, upper) in price_bins.items():
+            count = bin_counts[label]
+            percentage = (count / total_priced_packages) * 100
+            price_distribution.append({"label": label, "count": count, "percentage": round(percentage)})
+
+    return render_template(
+        'insights.html', 
+        kpis=kpi_data,
+        trending_destinations=top_destinations,
+        popular_categories=popular_categories,
+        regional_distribution=regional_distribution,
+        price_analysis=price_analysis,
+        price_distribution=price_distribution
+    )
 
 
 # --- NEW ROUTE: Admin Sign In ---
