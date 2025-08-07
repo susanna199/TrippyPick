@@ -111,43 +111,6 @@ def browse():
     ]
     return render_template("browse.html", packages=packages)
 
-# @app.route('/compare')
-# def compare():
-#     packages = [
-#         {
-#             "title": "Bali Paradise Getaway",
-#             "location": "Bali, Indonesia",
-#             "price": 1299,
-#             "original_price": 1599,
-#             "duration": "7 days, 6 nights",
-#             "rating": 4.8,
-#             "reviews": 124,
-#             "group_size": 12,
-#             "difficulty": "Easy",
-#             "tags": ["Beach", "Culture", "Adventure"],
-#             "included": ["Accommodation", "Breakfast", "Transport", "Guide"],
-#             "provider": "bali_adventures"
-#         },
-#         {
-#             "title": "Swiss Alps Adventure",
-#             "location": "Interlaken, Switzerland",
-#             "price": 2499,
-#             "original_price": 2899,
-#             "duration": "5 days, 4 nights",
-#             "rating": 4.9,
-#             "reviews": 89,
-#             "group_size": 8,
-#             "difficulty": "Moderate",
-#             "tags": ["Mountains", "Adventure", "Luxury"],
-#             "included": ["Accommodation", "All Meals", "Transport", "Guide", "Equipment"],
-#             "provider": "swiss_tours"
-#         }
-#         # Third slot left empty to show "Add Package" placeholder
-#     ]
-
-#     return render_template("compare.html", packages=packages)
-
-
 # --- Helper Functions ---
 
 def calculate_value_score(package):
@@ -175,7 +138,6 @@ def calculate_value_score(package):
     except (ValueError, TypeError, ZeroDivisionError):
         return 0.0
 
-
 def transform_package_data(db_package):
     """
     Transforms a single package object from Supabase DB schema 
@@ -183,6 +145,23 @@ def transform_package_data(db_package):
     """
     # The JOIN is still useful for getting rating/review data from the agency table
     agency_data = db_package.get('agency', {}) or {} 
+
+    # --- NEW LOGIC TO PROCESS THEMES ---
+    # 1. Get the raw themes string, e.g., "['Adventure', 'Culture']"
+    themes_str = db_package.get('themes', '')
+    
+    # 2. Clean the string and split it into a list
+    themes_list = []
+    if themes_str and themes_str.startswith('[') and themes_str.endswith(']'):
+        # Remove brackets, quotes, and then split by comma
+        cleaned_str = themes_str.strip("[]").replace("'", "")
+        themes_list = [theme.strip() for theme in cleaned_str.split(',') if theme.strip()]
+
+    # 3. Get the highlights list (your existing logic)
+    highlights_list = [tag.strip() for tag in db_package.get('highlights', '').split(',') if tag.strip()]
+    
+    # 4. Combine both lists and remove duplicates
+    combined_tags = list(dict.fromkeys(themes_list + highlights_list))
 
     transformed = {
         "package_id": db_package.get('package_id'),
@@ -197,14 +176,17 @@ def transform_package_data(db_package):
         "group_size": db_package.get('group_size', 0),
         "difficulty": db_package.get('difficulty', 'N/A'),
         "image_url": db_package.get('image_url', ''),
-        "tags": [tag.strip() for tag in db_package.get('highlights', '').split(',') if tag.strip()],
+        # Use the new combined list for the tags
+        "tags": combined_tags,
         "included": [item.strip() for item in db_package.get('inclusions_detailed', '').split(',') if item.strip()],
         # Get agency_name directly from the package data, which is more reliable.
         "provider": db_package.get('agency_name', 'N/A')
     }
     # Calculate and add value score
+    # Note: calculate_value_score function is assumed to exist elsewhere in your code
     transformed['value_score'] = calculate_value_score(transformed)
     return transformed
+
 
 # --- Main Flask Route ---
 
