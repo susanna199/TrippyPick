@@ -1,5 +1,5 @@
 /* ======================
-   Global Styles
+  Global Styles
 ====================== */
 body {
   margin: 0;
@@ -34,165 +34,8 @@ nav:hover {
 }
 
 /* ======================
-   Home Page Styles
+  Home Page Styles
 ====================== */
-/* #home-page nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 60px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-#home-page nav .logo {
-  font-size: 26px;
-  font-weight: 700;
-  color: #2c3e50;
-}
-
-#home-page nav a {
-  margin: 0 15px;
-  font-weight: 500;
-  color: #555;
-}
-
-#home-page .btn-black {
-  padding: 10px 20px;
-  background-color: #333;
-  color: #fff;
-  border-radius: 6px;
-}
-
-#home-page .hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 80px 60px;
-  background: linear-gradient(to right, #f5f7fa, #e4ecf7);
-}
-
-#home-page .hero-text {
-  max-width: 50%;
-}
-
-#home-page .hero h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
-  color: #1e1e1e;
-}
-
-#home-page .hero p {
-  font-size: 18px;
-  margin-bottom: 30px;
-}
-
-#home-page .search-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-#home-page .search-bar input {
-  padding: 10px;
-  width: 250px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-#home-page .search-bar button {
-  padding: 10px 20px;
-  background-color: #4285f4;
-  color: white;
-  border-radius: 6px;
-}
-
-#home-page .buttons button {
-  padding: 12px 20px;
-  margin-right: 10px;
-  border-radius: 6px;
-  font-weight: 500;
-}
-
-#home-page .explore-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-#home-page .learn-btn {
-  background-color: #f8f9fa;
-  border: 1px solid #ccc;
-  color: #333;
-}
-
-#home-page img {
-  width: 500px;
-  max-width: 100%;
-  border-radius: 12px;
-}
-
-#home-page .highlight {
-  text-align: center;
-  font-size: 32px;
-  color: #222;
-  margin-bottom: 40px;
-}
-
-#home-page .features-grid,
-#home-page .steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 30px;
-  padding: 0 60px;
-}
-
-#home-page .feature,
-#home-page .step {
-  background-color: #ffffff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  transition: transform 0.2s ease;
-}
-
-#home-page .feature:hover,
-#home-page .step:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-}
-
-#home-page footer {
-  padding: 30px;
-  text-align: center;
-  background-color: #fafafa;
-  color: #777;
-  font-size: 14px;
-} */
-
-/* ===== HOME PAGE ===== */
-nav {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 50px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-}
-
-nav a {
-  margin: 0 15px;
-  color: #333;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-#home-page .btn-black {
-  background: black;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 6px;
-}
-
 #home-page .hero {
   display: flex;
   justify-content: space-between;
@@ -263,14 +106,14 @@ nav a {
 }
 
 #home-page .section {
-  padding: 60px 50px;
+  padding: 20px 50px;
   text-align: center;
 }
 
-#home-page .features-grid, 
-#home-page .steps-grid {
+/* MODIFIED: Changed grid-template-columns to handle 4 items */
+#home-page .features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* Changed from 3 to 4 */
   gap: 30px;
   margin-top: 40px;
   text-align: left;
@@ -363,9 +206,6 @@ nav a {
 .icon.orange { background: #fff7ed; color: #f97316; }
 .icon.red { background: #fee2e2; color: #dc2626; }
 
-
-
-
 /* How It Works Section */
 #home-steps {
   text-align: center;
@@ -424,151 +264,9 @@ nav a {
   line-height: 1.5;
 }
 
-
-
 /* ======================
-   Browse Page Styles
+  Browse Page Styles
 ====================== */
-/* #browse-page .browse-container {
-  display: flex;
-  padding: 40px 60px;
-  gap: 30px;
-}
-
-#browse-page .filters {
-  width: 250px;
-  background-color: #ffffff;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  height: fit-content;
-}
-
-#browse-page .filters h2 {
-  font-size: 20px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-#browse-page .filters .search-input,
-#browse-page .filters .dropdown {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-#browse-page .filters .apply-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
-  border-radius: 6px;
-  width: 100%;
-}
-
-#browse-page .package-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
-}
-
-#browse-page .card {
-  background-color: white;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 10px;
-  position: relative;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-  transition: transform 0.2s ease;
-}
-
-#browse-page .card:hover {
-  transform: translateY(-4px);
-}
-
-#browse-page .image-placeholder {
-  height: 160px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
-}
-
-#browse-page .discount {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background-color: #ff4d4f;
-  color: white;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 5px;
-}
-
-#browse-page .card h3 {
-  font-size: 20px;
-  margin: 15px 0 5px;
-}
-
-#browse-page .card p {
-  font-size: 14px;
-  color: #555;
-}
-
-#browse-page .tags {
-  display: flex;
-  gap: 6px;
-  margin: 10px 0;
-}
-
-#browse-page .tag {
-  background-color: #e0f7fa;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 6px;
-}
-
-#browse-page .price {
-  margin: 10px 0;
-}
-
-#browse-page .price .current {
-  font-size: 18px;
-  font-weight: bold;
-  color: #28a745;
-}
-
-#browse-page .price .original {
-  font-size: 14px;
-  color: #999;
-  text-decoration: line-through;
-  margin-left: 8px;
-}
-
-#browse-page .buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-#browse-page .details-btn,
-#browse-page .compare-btn {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  background-color: #f1f1f1;
-  color: #333;
-}
-
-#browse-page .compare-btn {
-  background-color: #ffc107;
-} */
-
-/* ===== BROWSE PAGE ===== */
 #browse-page {
   font-family: 'Segoe UI', sans-serif;
   background: #f6f6f6;
@@ -720,195 +418,6 @@ nav a {
   background: #f1f1f1;
 }
 
-
-/* ======================
-   Compare Page Styles
-====================== */
-/* #compare-page {
-  padding: 40px 60px;
-  background: #fafafa;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-#compare-page .compare-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-#compare-page .compare-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-#compare-page .compare-header p {
-  color: #666;
-  font-size: 16px;
-}
-
-#compare-page .compare-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-#compare-page .compare-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  padding: 20px;
-  position: relative;
-}
-
-.compare-card .rank-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: black;
-  color: white;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.compare-card .image-placeholder {
-  height: 160px;
-  background: #eee;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-}
-
-.compare-card h3 {
-  font-size: 20px;
-  margin-bottom: 4px;
-}
-
-.compare-card .location {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 10px;
-}
-
-.compare-card .price {
-  margin-bottom: 10px;
-}
-
-.compare-card .current {
-  font-size: 20px;
-  font-weight: 700;
-  color: #28a745;
-}
-
-.compare-card .original {
-  text-decoration: line-through;
-  color: #999;
-  margin-left: 8px;
-  font-size: 14px;
-}
-
-.compare-card .per-person {
-  display: block;
-  font-size: 12px;
-  color: #777;
-  margin-top: 2px;
-}
-
-.compare-card .rating,
-.compare-card .group,
-.compare-card .duration,
-.compare-card .difficulty {
-  font-size: 14px;
-  margin: 6px 0;
-}
-
-.compare-card .tag-row {
-  margin: 10px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.compare-card .tag {
-  background: #e0f7fa;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.compare-card .tag.easy {
-  background: #d4edda;
-  color: #155724;
-}
-
-.compare-card .tag.moderate {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.compare-card .tag.hard {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.compare-card .includes h4 {
-  margin-top: 15px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.compare-card .includes ul {
-  padding-left: 18px;
-  margin: 5px 0 10px;
-  list-style: none;
-}
-
-.compare-card .includes li {
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.compare-card .provider {
-  font-size: 13px;
-  color: #555;
-  margin-top: 10px;
-}
-
-.compare-card.empty {
-  background: #f9f9f9;
-  border: 2px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 30px;
-}
-
-.compare-card .add-package .plus-icon {
-  font-size: 36px;
-  background: #e0e0e0;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin: 0 auto 10px;
-  line-height: 50px;
-  color: #444;
-}
-
-.compare-card .add-package p {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.compare-card .add-package small {
-  color: #888;
-  font-size: 12px;
-} */
 
 /* =============================================
    COMPARE PAGE STYLES - Revamped for TrippyPick
@@ -1336,6 +845,9 @@ nav a {
 
 /* ===== INSIGHTS PAGE ===== */
 
+/* ======================
+  Insights page Styles
+====================== */
 .insights-container {
   padding: 40px 60px;
   font-family: 'Inter', sans-serif;
@@ -1530,3 +1042,517 @@ nav a {
   font-size: 12px;
   color: green;
 }
+
+
+/* ======================
+  Admin Sign In Page
+====================== */
+#admin-signin-page .signin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Full viewport height minus navbar */
+    padding: 40px 20px;
+}
+
+#admin-signin-page .signin-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+#admin-signin-page .signin-card h1 {
+    font-weight: 800;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+#admin-signin-page .form-control {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+#admin-signin-page .btn-signin {
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 600;
+    background-color: #000;
+    border-color: #000;
+}
+
+/* ==========================
+  Caption Recommender Page
+========================== */
+#caption-page .caption-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+#caption-page h1 {
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+#caption-page .subtitle {
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+#caption-page .upload-area {
+    border: 2px dashed #ced4da;
+    border-radius: 12px;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+#caption-page .upload-area:hover {
+    border-color: black;
+    background-color: #f7faff;
+}
+
+#caption-page .upload-area i {
+    font-size: 40px;
+    color: black;
+    margin-bottom: 15px;
+}
+
+#caption-page .upload-area p {
+    font-weight: 600;
+    margin: 0;
+}
+
+#caption-page #imageUpload {
+    display: none; /* Hide the actual input */
+}
+
+#caption-page .form-label {
+    font-weight: 600;
+    text-align: left;
+    display: block;
+}
+
+#caption-page .form-control {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+#caption-page .btn-generate {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-top: 15px;
+    background-color: #000;
+    color: #fff;
+}
+
+#caption-page #caption-result {
+    margin-top: 30px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 100px;
+    text-align: left;
+    font-style: italic;
+    color: #495057;
+    border: 1px solid #e9ecef;
+}
+
+/* ==========================
+  Price Predictor Page
+========================== */
+#predictor-page .predictor-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+#predictor-page h1 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+#predictor-page .subtitle {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 35px;
+}
+
+#predictor-page .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+#predictor-page .form-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+#predictor-page .form-control,
+#predictor-page .form-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+}
+
+#predictor-page .btn-predict {
+    grid-column: 1 / -1; /* Make button span both columns */
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-top: 15px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#predictor-page #price-result-container {
+    grid-column: 1 / -1;
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+#predictor-page #price-result-container h3 {
+    font-size: 1.2rem;
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+#predictor-page #predicted-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #000;
+}
+
+#predictor-page #predicted-price small {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+/* ======================
+  Home Page - Other Services Section
+====================== */
+#other-services {
+    background-color: #f8f9fa; /* Use the light grey to stand out */
+    padding: 40px 50px;
+    text-align: center;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Creates the two-column layout */
+    gap: 30px; /* Space between the two cards */
+    margin-top: 30px;
+    text-align: center;
+}
+
+.service-card {
+    background-color: #ffffff;
+    padding: 35px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column; /* Stacks items vertically inside the card */
+    align-items: center; /* Centers items horizontally */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.service-card .icon-showcase {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.service-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.service-card .service-description {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.6;
+    flex-grow: 1; /* This makes the text content take up available space, pushing the button down */
+    margin-bottom: 25px;
+}
+
+.service-card .cta-btn {
+    display: inline-block;
+    background: #000;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.service-card .cta-btn:hover {
+    background-color: #333;
+}
+
+/* ==========================
+  Package Detail Page
+========================== */
+#package-detail-page {
+  background-color: #f8f9fa;
+  padding: 30px 5%;
+}
+
+.detail-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-content {
+  flex: 2; /* Takes up 2/3 of the space */
+}
+
+.sidebar {
+  flex: 1; /* Takes up 1/3 of the space */
+  position: sticky;
+  top: 100px; /* Adjust based on your navbar height */
+  height: fit-content;
+}
+
+/* --- Header Section --- */
+.package-header {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.package-header .breadcrumbs {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 15px;
+}
+.package-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.package-header .info-bar {
+  display: flex;
+  gap: 20px;
+  color: #495057;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+.info-bar i {
+  margin-right: 6px;
+  color: #6c757d;
+}
+.package-header .tags .tag {
+  display: inline-block;
+  background-color: #e9ecef;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 8px;
+}
+.tags .discount-tag {
+  background-color: #f8d7da;
+  color: #842029;
+  font-weight: 600;
+}
+
+/* --- Image Section --- */
+.package-image {
+  margin-bottom: 20px;
+}
+.package-image img {
+  width: 100%;
+  border-radius: 12px;
+  max-height: 450px;
+  object-fit: cover;
+}
+.package-image .image-placeholder {
+  width: 100%;
+  height: 400px;
+  background-color: #e9ecef;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  color: #ced4da;
+}
+
+/* --- Content & Sidebar Cards --- */
+.description-card, .highlights-card, .inclusions-grid, .sidebar-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.description-card h2, .highlights-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.description-card p {
+  line-height: 1.7;
+  color: #495057;
+}
+
+/* --- Highlights & Inclusions --- */
+.highlights-card ul, .inclusion-card ul {
+  list-style: none;
+  padding: 0;
+}
+.highlights-card li, .inclusion-card li {
+  margin-bottom: 10px;
+  color: #495057;
+  font-size: 15px;
+}
+.highlights-card li i, .inclusion-card li i {
+  margin-right: 10px;
+  font-size: 14px;
+}
+.inclusions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 0;
+  background: transparent;
+}
+.inclusion-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.inclusion-card.included i {
+  color: #198754; /* Green */
+}
+.inclusion-card.not-included i {
+  color: #dc3545; /* Red */
+}
+
+/* --- Sidebar Specifics --- */
+.price-card {
+  text-align: center;
+}
+.price-card .current-price {
+  font-size: 36px;
+  font-weight: 700;
+}
+.price-card .original-price {
+  font-size: 18px;
+  color: #6c757d;
+  text-decoration: line-through;
+  margin: 0 10px;
+}
+.price-card .save-amount {
+  background-color: #f8d7da;
+  color: #842029;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.price-card .per-person {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 15px;
+}
+.btn-book-now, .btn-add-compare, .btn-view-profile {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #ced4da;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: block; /* For anchor tags */
+  text-align: center;
+}
+.btn-book-now {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  margin-bottom: 10px;
+}
+.btn-add-compare {
+  background: #fff;
+  color: #333;
+}
+.btn-book-now:hover { background: #333; }
+.btn-add-compare:hover { background: #f1f3f5; }
+.cancellation {
+  font-size: 13px;
+  color: #6c757d;
+  margin-top: 15px;
+}
+
+.provider-card .provider-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.provider-info .avatar {
+  font-size: 40px;
+  color: #adb5bd;
+}
+.provider-details {
+  display: flex;
+  flex-direction: column;
+}
+.provider-name { font-weight: 600; }
+.provider-stats { font-size: 14px; color: #6c757d; }
+.btn-view-profile {
+  background: #fff;
+  color: #333;
+}
+.btn-view-profile:hover { background: #f1f3f5; }
+
+.quick-facts-card ul { list-style: none; padding: 0; }
+.quick-facts-card li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 15px;
+}
+.quick-facts-card li:last-child { border-bottom: none; }
+.quick-facts-card li i { margin-right: 8px; color: #6c757d; }
+.quick-facts-card li strong { color: #333; }

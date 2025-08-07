@@ -6,25 +6,22 @@
   <div class="hero">
     <div class="hero-text">
       <h1>{{ title }}</h1>
-      <p>Compare and book curated travel packages from verified partners using AI-powered filters.</p>
+      <p>Compare and book curated travel packages from verified partners using our AI-powered filters</p>
       <div class="search-bar">
         <input type="text" placeholder="Search destinations, packages...">
-        <button>Search</button>
+        <a href="{{ url_for('browse') }}"><button>Search</button></a>
       </div>
       <div class="buttons">
-        <button class="explore-btn">Explore</button>
-        <button class="learn-btn">Learn More</button>
+        <a href="{{ url_for('browse') }}"><button class="explore-btn">Explore</button></a>
+        <a href="#home-features"><button class="learn-btn">Learn More</button></a>
       </div>
     </div>
-    <!-- <img src="/TrippyPick/static/images/home1.jpeg" alt="Travel Visual" /> -->
     <img src="{{ url_for('static', filename='images/home1.jpeg') }}" alt="Travel Visual" style="width: 600px; height: 450px;">
-
   </div>
 
   <div class="section" id="home-features">
     <h2 class="highlight">Why Choose TrippyPick?</h2>
-    <p class="subtitle">Our AI-powered platform makes travel planning smarter, faster, and more personalized than ever before.</p>
-
+    <p class="subtitle">Our AI-powered platform makes travel planning smarter, faster, and more personalized than ever before</p>
     <div class="features-grid">
         {% for feature in features %}
         <div class="feature">
@@ -36,13 +33,10 @@
         </div>
         {% endfor %}
     </div>
-</div>
-
+  </div>
 
   <div class="section" id="home-steps">
-    <span class="steps-badge">How It Works</span>
     <h2 class="highlight">Simple Steps to Your Dream Trip</h2>
-
     <div class="steps-grid">
         {% for step in steps %}
         <div class="step">
@@ -52,8 +46,28 @@
         </div>
         {% endfor %}
     </div>
-</div>
+  </div>
 
+  <div class="section" id="other-services">
+    <h2 class="highlight">Explore Our AI Tools</h2>
+    <p class="subtitle">Go beyond package comparison with our smart travel utilities.</p>
+    
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="icon-showcase"><i class="fas fa-magic"></i></div>
+            <h3>AI Caption Recommender</h3>
+            <p class="service-description">Let our AI generate the perfect, quirky caption for your latest travel photos. Just upload and go!</p>
+            <a href="{{ url_for('caption_recommender') }}" class="cta-btn">Generate a Caption</a>
+        </div>
+
+        <div class="service-card">
+            <div class="icon-showcase"><i class="fas fa-calculator"></i></div>
+            <h3>Custom Trip Predictor</h3>
+            <p class="service-description">Planning your own adventure? Customize your trip details and let our AI predict the cost for you instantly.</p>
+            <a href="{{ url_for('price_predictor') }}" class="cta-btn">Predict Your Trip's Cost</a>
+        </div>
+    </div>
+  </div>
 
   <footer>
     © 2025 TrippyPick | <a href="#">Privacy</a> | <a href="#">Terms</a>

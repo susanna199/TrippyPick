@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Trip Price Predictor | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="predictor-page">
+  <div class="predictor-container">
+    <h1>Trip Price Predictor</h1>
+    <p class="subtitle">Fill in your travel preferences below, and our AI will estimate the cost of your custom trip.</p>
+    
+    <form id="predictorForm" class="form-grid">
+      
+      <!-- Destination -->
+      <div class="form-group">
+        <label for="destination" class="form-label">Destination</label>
+        <input type="text" class="form-control" id="destination" placeholder="e.g., Paris, France">
+      </div>
+
+      <!-- Travel Days -->
+      <div class="form-group">
+        <label for="days" class="form-label">Number of Travel Days</label>
+        <input type="number" class="form-control" id="days" placeholder="e.g., 7" min="1">
+      </div>
+
+      <!-- Number of People -->
+      <div class="form-group">
+        <label for="people" class="form-label">Number of People</label>
+        <input type="number" class="form-control" id="people" placeholder="e.g., 2" min="1">
+      </div>
+
+      <!-- Trip Style -->
+      <div class="form-group">
+        <label for="tripStyle" class="form-label">Trip Style</label>
+        <select class="form-select" id="tripStyle">
+          <option selected>Choose...</option>
+          <option value="budget">Budget-Friendly</option>
+          <option value="standard">Standard</option>
+          <option value="luxury">Luxury</option>
+        </select>
+      </div>
+
+      <!-- Accommodation Type -->
+      <div class="form-group">
+        <label for="accommodation" class="form-label">Accommodation Type</label>
+        <select class="form-select" id="accommodation">
+          <option selected>Choose...</option>
+          <option value="hostel">Hostel</option>
+          <option value="hotel_3star">3-Star Hotel</option>
+          <option value="hotel_5star">5-Star Hotel</option>
+          <option value="resort">Resort / Villa</option>
+        </select>
+      </div>
+
+      <!-- Flight Class -->
+      <div class="form-group">
+        <label for="flightClass" class="form-label">Flight Class</label>
+        <select class="form-select" id="flightClass">
+          <option selected>Choose...</option>
+          <option value="economy">Economy</option>
+          <option value="business">Business</option>
+          <option value="first">First Class</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-predict">Predict Price</button>
+
+      <!-- Prediction Result Area -->
+      <div id="price-result-container">
+        <h3>Estimated Trip Cost</h3>
+        <div id="predicted-price">₹0 <small>/ per person</small></div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  // Simple script to simulate a price prediction
+  document.getElementById('predictorForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent actual form submission
+
+    const resultDiv = document.getElementById('predicted-price');
+    resultDiv.innerHTML = 'Calculating...';
+
+    // Simulate a delay for "AI processing"
+    setTimeout(() => {
+      // Basic mock calculation - a real version would use an API call to a model
+      const days = parseInt(document.getElementById('days').value) || 7;
+      const people = parseInt(document.getElementById('people').value) || 1;
+      
+      let baseRate = 5000; // Base cost per day
+      
+      // Adjust base rate based on selections
+      const tripStyle = document.getElementById('tripStyle').value;
+      if (tripStyle === 'budget') baseRate *= 0.7;
+      if (tripStyle === 'luxury') baseRate *= 2.5;
+
+      const accommodation = document.getElementById('accommodation').value;
+      if (accommodation === 'hostel') baseRate *= 0.6;
+      if (accommodation === 'hotel_5star') baseRate *= 2.0;
+      if (accommodation === 'resort') baseRate *= 2.2;
+
+      const flightClass = document.getElementById('flightClass').value;
+      if (flightClass === 'business') baseRate *= 1.8;
+      if (flightClass === 'first') baseRate *= 3.5;
+
+      const estimatedPrice = Math.round(days * baseRate);
+
+      // Format to Indian Rupee style
+      const formattedPrice = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(estimatedPrice).replace('₹', '₹ '); // Add space after symbol
+
+      resultDiv.innerHTML = `${formattedPrice} <small>/ per person</small>`;
+    }, 1500);
+  });
+</script>
+{% endblock %}

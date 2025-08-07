@@ -6,9 +6,7 @@
   <title>{% block title %}TrippyPick{% endblock %}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -22,22 +20,22 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('browse') }}">Browse</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('compare') }}">Compare</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('insights') }}">Insights</a></li>
-                <li class="nav-item"><a class="btn btn-dark ms-3" href="#">Sign In</a></li>
+                <li class="nav-item"><a class="btn btn-dark ms-3" href="{{ url_for('admin_signin') }}">Sign In</a></li>
             </ul>
         </div>
     </div>
 </nav>
-
 
   <main>
     {% block content %}{% endblock %}
   </main>
   
   <footer>
-    <!-- Optional: Add footer content here -->
-  </footer>
+    </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
