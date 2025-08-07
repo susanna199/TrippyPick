@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Reload the page with the updated URL
+            // CORRECTED LINE
             window.location.href = `${currentUrl.pathname}?${params.toString()}`;
         });
     });

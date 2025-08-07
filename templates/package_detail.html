@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}{{ package.package_name }} | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="package-detail-page">
+  <div class="detail-container">
+    
+    <div class="main-content">
+      <div class="package-header">
+        <p class="breadcrumbs">Home / Browse / {{ package.package_name }}</p>
+        <h1>{{ package.package_name }}</h1>
+        <div class="info-bar">
+          <span><i class="fas fa-location-dot"></i> {{ package.destination }}</span>
+          <span><i class="fas fa-calendar-days"></i> {{ package.days }} days, {{ package.nights }} nights</span>
+        </div>
+        <div class="tags">
+          {% set first_theme = (package.themes.split(',')[0] | replace("[", "") | replace("]", "") | replace("'", "")).strip() %}
+          <span class="tag">{{ first_theme }}</span>
+          {% if package.original_cost and package.cost_per_package and package.original_cost > package.cost_per_package %}
+            {% set discount = ((package.original_cost - package.cost_per_package) / package.original_cost * 100) | round | int %}
+            <span class="tag discount-tag">{{ discount }}% OFF</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="package-image">
+        {# Use destination_img from CSV #}
+        {% if package.destination_img %}
+            <img src="{{ url_for('static', filename=package.destination_img.replace('static/', '')) }}" alt="{{ package.package_name }}">
+        {% else %}
+            <div class="image-placeholder"><i class="fas fa-image"></i></div>
+        {% endif %}
+      </div>
+
+      <div class="content-tabs">
+          <div class="tab-header">
+              <button class="tab-link active">Overview</button>
+              <button class="tab-link">Itinerary</button>
+              <button class="tab-link">Reviews</button>
+          </div>
+          <div class="tab-content">
+              <div class="description-card">
+                  <h2>Description</h2>
+                  <p>{{ package.description or 'No description available for this package yet.' }}</p>
+              </div>
+              <div class="highlights-card">
+                  <h2>Highlights</h2>
+                  <ul>
+                    {% for highlight in (package.highlights or '').split(',') %}
+                      {% if highlight.strip() %}
+                        <li><i class="fas fa-check"></i> {{ highlight.strip() }}</li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+              </div>
+              <div class="inclusions-grid">
+                  <div class="inclusion-card included">
+                      <h3>What's Included</h3>
+                      <ul>
+                        {% for item in (package.inclusions_detailed or '').split(',') %}
+                            {% if item.strip() %}
+                              <li><i class="fas fa-check"></i> {{ item.strip() }}</li>
+                            {% endif %}
+                        {% endfor %}
+                      </ul>
+                  </div>
+                  <div class="inclusion-card not-included">
+                      <h3>Not Included</h3>
+                      <ul>
+                        {# Use exclusions_detailed from CSV #}
+                        {% for item in (package.exclusions_detailed or '').split(',') %}
+                          {% if item.strip() %}
+                            <li><i class="fas fa-times"></i> {{ item.strip() }}</li>
+                          {% endif %}
+                        {% endfor %}
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-card price-card">
+        <div class="price-top">
+          <span class="current-price">₹{{ "{:,.0f}".format(package.cost_per_package) }}</span>
+          {# Logic to handle optional original_cost #}
+          {% if package.original_cost and package.original_cost > package.cost_per_package %}
+            <span class="original-price">₹{{ "{:,.0f}".format(package.original_cost) }}</span>
+          {% endif %}
+        </div>
+        <p class="per-person">per person</p>
+        <button class="btn-book-now">Book Now</button>
+        <a href="{{ url_for('compare', ids=package.package_id) }}" class="btn-add-compare">Add to Compare</a>
+        <p class="cancellation">Free cancellation up to 48 hours</p>
+      </div>
+
+      <div class="sidebar-card provider-card">
+          <h3>Travel Provider</h3>
+          <div class="provider-info">
+              <i class="fas fa-user-circle avatar"></i>
+              <div class="provider-details">
+                  <span class="provider-name">{{ package.agency_name }}</span>
+              </div>
+          </div>
+          <button class="btn-view-profile">View Profile</button>
+      </div>
+
+      <div class="sidebar-card quick-facts-card">
+        <h3>Quick Facts</h3>
+        <ul>
+          <li>
+            <span><i class="fas fa-clock"></i> Duration</span>
+            <strong>{{ package.days }} days, {{ package.nights }} nights</strong>
+          </li>
+          <li>
+            <span><i class="fas fa-users"></i> Group Size</span>
+            <strong>Max {{ package.group_size }} people</strong>
+          </li>
+          {# Removed Transport and Accommodation as they are not in the CSV #}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
