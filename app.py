@@ -1,8 +1,13 @@
 import os
 from dotenv import load_dotenv
 from supabase import create_client
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory  
 import math
+
+# --- This block calculates the absolute path to your project ---
+# This ensures that Flask knows exactly where your project folder is,
+# regardless of how you run the script.
+project_root = os.path.abspath(os.path.dirname(__file__))
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,7 +20,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- THE CRITICAL FIX IS ON THIS LINE ---
 # This explicitly configures the static folder path for Flask.
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+app = Flask(__name__, root_path=project_root)
 
 
 @app.route('/test')
@@ -91,7 +96,13 @@ def package_detail(package_id):
     package = response.data
     return render_template("package_detail.html", package=package)
 
-# ... (all your other routes like /compare, /insights, etc., remain here) ...
+# --- NEW ROUTE TO MANUALLY SERVE IMAGES ---
+@app.route('/static/images/<filename>')
+def serve_image(filename):
+    # This route will find the 'static/images' directory relative to the project root
+    # and send the requested file from it.
+    image_dir = os.path.join(project_root, 'static', 'images')
+    return send_from_directory(image_dir, filename)
 
 # --- Helper Functions ---
 # Your original helper functions are preserved
