@@ -4,46 +4,53 @@
 {% block content %}
 <section id="browse-page">
   <div class="browse-container">
-    
-    <!-- Filters -->
     <div class="filters">
       <h2>Filters</h2>
       <input class="search-input" type="text" placeholder="Search destination" />
       <select class="dropdown">
         <option>Any Duration</option>
-        <option>1-2 Days</option>
-        <option>3-5 Days</option>
+        <option>1-3 Days</option>
+        <option>4-6 Days</option>
+        <option>7+ Days</option>
       </select>
       <select class="dropdown">
         <option>Any Theme</option>
         <option>Adventure</option>
         <option>Beach</option>
+        <option>Culture</option>
       </select>
       <button class="apply-btn">Apply Filters</button>
     </div>
+    <div class="package-grid">
+      <div class="cards">
+        {% for package in packages %}
+        <div class="card">
+            <div class="image-placeholder">
+                {# FINAL WORKING VERSION: url_for() now works because app.py is fixed #}
+                {% if package.destination_img %}
+                    <img src="{{ url_for('static', filename=package.destination_img.replace('static/', '')) }}" alt=" ">
+                {% else %}
+                    🏔️
+                {% endif %}
+            </div>
 
-    <!-- Package Cards -->
-    <div class="package-grid cards">
-      {% for package in packages %}
-      <div class="card">
-        <div class="image-placeholder">🏔️</div>
-        <div class="discount">20% OFF</div>
-        <h3>{{ package.title }}</h3>
-        <p>{{ package.destination }}</p>
-        <div class="tags">
-          <span class="tag">{{ package.theme }}</span>
-          <span class="tag">3D/2N</span>
+            <h3>{{ package.package_name }}</h3>
+            <p><i class="fas fa-location-dot"></i> {{ package.destination }}</p>
+            <div class="tags">
+                {% set first_theme = (package.themes.split(',')[0] | replace("[", "") | replace("]", "") | replace("'", "")).strip() %}
+                <span class="tag">{{ first_theme }}</span>
+                <span class="tag">{{ package.days }}D/{{ package.nights }}N</span>
+            </div>
+            <div class="price">
+                <span class="current">₹{{ "{:,.0f}".format(package.cost_per_package) }}</span>
+            </div>
+            <div class="buttons">
+                <a href="{{ url_for('package_detail', package_id=package.package_id) }}" class="details-btn">View Details</a>
+                <a href="{{ url_for('compare', ids=package.package_id) }}" class="compare-btn">Compare</a>
+            </div>
         </div>
-        <div class="price">
-          <span class="current">₹{{ package.price }}</span>
-          <span class="original">₹{{ package.price + 2000 }}</span>
-        </div>
-        <div class="buttons">
-          <button class="details-btn">View</button>
-          <button class="compare-btn">Compare</button>
-        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
 </section>

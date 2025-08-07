@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admin Sign In | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="admin-signin-page">
+  <div class="signin-container">
+    <div class="card signin-card">
+      <h1>Admin Portal</h1>
+      <form>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" placeholder="admin@trippypick.com">
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-dark btn-signin">Sign In</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

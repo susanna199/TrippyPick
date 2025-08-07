@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}AI Caption Recommender | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="caption-page">
+  <div class="caption-container">
+    <h1>AI Caption Recommender</h1>
+    <p class="subtitle">Upload your travel photo, tell us where you were, and let our AI do the rest!</p>
+    
+    <form id="captionForm">
+      <label for="imageUpload" class="upload-area">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Click to upload your image</p>
+      </label>
+      <input type="file" id="imageUpload" accept="image/*">
+
+      <div class="my-3">
+        <label for="location" class="form-label">Location (e.g., "Paris, France")</label>
+        <input type="text" class="form-control" id="location" placeholder="Where was this photo taken?">
+      </div>
+
+      <button type="submit" class="btn btn-generate">Generate Caption</button>
+    </form>
+
+    <div id="caption-result">
+      <p>Your AI-generated caption will appear here...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple script to simulate AI response on button click
+  document.getElementById('captionForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form from submitting for this demo
+    
+    const location = document.getElementById('location').value || 'this beautiful place';
+    const resultDiv = document.getElementById('caption-result');
+
+    resultDiv.innerHTML = '<p>Generating...</p>';
+
+    // Simulate a network delay
+    setTimeout(() => {
+      // Example of a generated caption
+      const captions = [
+        `Woke up in ${location} and life feels like a dream. ✨ #TravelGram #PostcardPerfect`,
+        `Finding paradise wherever I go, but I think I'll stay a while in ${location}. ☀️ #Wanderlust`,
+        `They say a picture is worth a thousand words, but all I can say is... ${location}! ❤️ #TravelGoals`,
+        `Collecting memories (and maybe a few souvenirs) in ${location}. #MakingMemories`
+      ];
+      // Pick a random caption from the list
+      const randomCaption = captions[Math.floor(Math.random() * captions.length)];
+      resultDiv.innerHTML = `<p>"${randomCaption}"</p>`;
+    }, 1200); // Increased delay for a more "thoughtful" AI feel
+  });
+
+  // Optional: Add feedback when a user selects a file
+  document.getElementById('imageUpload').addEventListener('change', function() {
+    const uploadLabel = document.querySelector('#caption-page .upload-area p');
+    if (this.files && this.files.length > 0) {
+      uploadLabel.textContent = `Image selected: ${this.files[0].name}`;
+    } else {
+      uploadLabel.textContent = 'Click to upload your image';
+    }
+  });
+</script>
+{% endblock %}

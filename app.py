@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from supabase import create_client
-from flask import Flask, render_template,request
+from flask import Flask, render_template, request
 import math
 
 # Load environment variables from .env file
@@ -13,9 +13,11 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # Create Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-app = Flask(__name__)
+# --- THE CRITICAL FIX IS ON THIS LINE ---
+# This explicitly configures the static folder path for Flask.
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
-# Testing backend connectivity
+
 @app.route('/test')
 def test():
     # Fetch data from packages table
@@ -27,45 +29,34 @@ def test():
     # Return JSON to browser
     return {"packages": response.data}
 
+@app.route('/')
 @app.route('/home')
 def home():
     features = [
         {
-            "title": "Instagram Integration",
-            "description": "Automatically aggregates travel packages from Instagram using advanced scraping and NLP technology.",
-            "icon": "fa-globe",
-            "color": "blue"
-        },
-        {
             "title": "Smart Filtering",
-            "description": "Use intelligent filters to find packages that match your budget, preferences, and travel style.",
+            "description": "Use intelligent filters to find packages that match your budget, preferences, and travel style",
             "icon": "fa-filter",
             "color": "purple"
         },
         {
             "title": "Data Analytics",
-            "description": "Get insights on pricing trends, popular destinations, and package comparisons with visual analytics.",
+            "description": "Get insights on pricing trends, popular destinations, and package comparisons with visual analytics",
             "icon": "fa-chart-line",
             "color": "green"
         },
         {
             "title": "AI-Powered Matching",
-            "description": "Our NLP algorithms understand your preferences and recommend the most suitable travel packages.",
+            "description": "Our NLP algorithms understand your preferences and recommend the most suitable travel packages",
             "icon": "fa-bolt",
             "color": "orange"
         },
         {
             "title": "Verified Packages",
-            "description": "All packages are verified and analyzed for authenticity, pricing accuracy, and quality assurance.",
+            "description": "All packages are verified and analyzed for authenticity, pricing accuracy, and quality assurance",
             "icon": "fa-shield-alt",
             "color": "red"
         },
-        {
-            "title": "Real-time Updates",
-            "description": "Stay updated with the latest packages, price changes, and availability in real-time.",
-            "icon": "fa-sync-alt",
-            "color": "purple"
-        }
     ]
 
     steps = [
@@ -83,72 +74,24 @@ def home():
 
 @app.route('/browse')
 def browse():
-    packages = [
-        {
-            "title": "Weekend Trip to Coorg",
-            "location": "Coorg, Karnataka",
-            "price": 5999,
-            "duration": "2 Days / 1 Night",
-            "agency": "WanderOn",
-            "rating": 4.5
-        },
-        {
-            "title": "Leh-Ladakh Adventure",
-            "location": "Leh, Ladakh",
-            "price": 22999,
-            "duration": "7 Days / 6 Nights",
-            "agency": "Adventure Buddha",
-            "rating": 4.8
-        },
-        {
-            "title": "Meghalaya Monsoon Magic",
-            "location": "Shillong, Cherrapunji",
-            "price": 14999,
-            "duration": "5 Days / 4 Nights",
-            "agency": "MuddieTrails",
-            "rating": 4.7
-        }
-    ]
+    # This now correctly queries only the columns that exist
+    response = supabase.table('packages').select(
+        'package_id, package_name, destination, cost_per_package, themes, destination_img, days, nights'
+    ).execute()
+    packages = response.data if response.data else []
     return render_template("browse.html", packages=packages)
 
-# @app.route('/compare')
-# def compare():
-#     packages = [
-#         {
-#             "title": "Bali Paradise Getaway",
-#             "location": "Bali, Indonesia",
-#             "price": 1299,
-#             "original_price": 1599,
-#             "duration": "7 days, 6 nights",
-#             "rating": 4.8,
-#             "reviews": 124,
-#             "group_size": 12,
-#             "difficulty": "Easy",
-#             "tags": ["Beach", "Culture", "Adventure"],
-#             "included": ["Accommodation", "Breakfast", "Transport", "Guide"],
-#             "provider": "bali_adventures"
-#         },
-#         {
-#             "title": "Swiss Alps Adventure",
-#             "location": "Interlaken, Switzerland",
-#             "price": 2499,
-#             "original_price": 2899,
-#             "duration": "5 days, 4 nights",
-#             "rating": 4.9,
-#             "reviews": 89,
-#             "group_size": 8,
-#             "difficulty": "Moderate",
-#             "tags": ["Mountains", "Adventure", "Luxury"],
-#             "included": ["Accommodation", "All Meals", "Transport", "Guide", "Equipment"],
-#             "provider": "swiss_tours"
-#         }
-#         # Third slot left empty to show "Add Package" placeholder
-#     ]
+@app.route('/package/<int:package_id>')
+def package_detail(package_id):
+    # (Your package_detail function remains here)
+    response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
+    if not response.data:
+        return "Package not found", 404
+    package = response.data
+    return render_template("package_detail.html", package=package)
 
-#     return render_template("compare.html", packages=packages)
+# ... (all your other routes like /compare, /insights, etc., remain here) ...
 
-
-# --- Helper Functions ---
 
 def calculate_value_score(package):
     """
@@ -207,7 +150,6 @@ def transform_package_data(db_package):
     return transformed
 
 # --- Main Flask Route ---
-
 @app.route('/compare')
 def compare():
     package_ids_str = request.args.get('ids', '')
@@ -258,7 +200,7 @@ def compare():
         query = query.not_.in_('package_id', package_ids)
     
     response_to_add = query.execute()
-
+    
     if response_to_add.data:
         # We only need a subset of data for the small "add" cards
         for pkg in response_to_add.data:
@@ -276,10 +218,26 @@ def compare():
         packages=padded_packages,
         packages_to_add=packages_to_add
     )
+
 @app.route('/insights')
 def insights():
     return render_template('insights.html')
 
+
+# --- NEW ROUTE: Admin Sign In ---
+@app.route('/admin/signin')
+def admin_signin():
+    return render_template('admin_signin.html')
+
+# --- NEW ROUTE: Caption Recommender ---
+@app.route('/caption-recommender')
+def caption_recommender():
+    return render_template('caption_recommender.html')
+
+# --- NEW ROUTE: Price Predictor ---
+@app.route('/price-predictor')
+def price_predictor():
+    return render_template('price_predictor.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

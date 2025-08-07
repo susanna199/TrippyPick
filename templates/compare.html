@@ -24,11 +24,13 @@
 
         <div class="card-content">
             <div class="image-placeholder">
-              {% if pkg.image_url %}
+              {{ pkg.destination_img }}
+              <!-- {% if pkg.image_url %}
                 <img src="{{ pkg.image_url }}" alt="{{ pkg.title }}">
               {% else %}
                 <span>🖼️</span>
-              {% endif %}
+              {% endif %} -->
+
             </div>
             <h3>{{ pkg.title }}</h3>
             <p class="location">📍 {{ pkg.location }}</p>
@@ -141,3 +143,4 @@
 
 <script src="{{ url_for('static', filename='js/compare.js') }}"></script>
 {% endblock %}
+
