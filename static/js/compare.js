@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add the new ID and reload the page
             const newIds = [...existingIds, packageIdToAdd];
             params.set('ids', newIds.join(','));
-            // CORRECTED LINE
             window.location.href = `${currentUrl.pathname}?${params.toString()}`;
         });
     });

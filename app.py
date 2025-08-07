@@ -81,7 +81,6 @@ def browse():
     packages = response.data if response.data else []
     return render_template("browse.html", packages=packages)
 
-
 @app.route('/package/<int:package_id>')
 def package_detail(package_id):
     # (Your package_detail function remains here)
@@ -93,8 +92,7 @@ def package_detail(package_id):
 
 # ... (all your other routes like /compare, /insights, etc., remain here) ...
 
-# --- Helper Functions ---
-# Your original helper functions are preserved
+
 def calculate_value_score(package):
     """
     Calculates a 'Value Score' for a package.
@@ -152,7 +150,6 @@ def transform_package_data(db_package):
     return transformed
 
 # --- Main Flask Route ---
-# Your original /compare route with all its Supabase logic is preserved
 @app.route('/compare')
 def compare():
     package_ids_str = request.args.get('ids', '')
@@ -203,7 +200,7 @@ def compare():
         query = query.not_.in_('package_id', package_ids)
     
     response_to_add = query.execute()
-
+    
     if response_to_add.data:
         # We only need a subset of data for the small "add" cards
         for pkg in response_to_add.data:

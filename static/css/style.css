@@ -418,9 +418,10 @@ nav:hover {
   background: #f1f1f1;
 }
 
+
 /* =============================================
-  COMPARE PAGE STYLES - Revamped for TrippyPick
-  ============================================= */
+   COMPARE PAGE STYLES - Revamped for TrippyPick
+   ============================================= */
 
 /* --- General Page Setup --- */
 #compare-page {
@@ -464,7 +465,6 @@ nav:hover {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    position: relative; /* This is crucial for positioning the 'X' button */
 }
 
 #compare-page .compare-card:hover {
@@ -612,40 +612,6 @@ nav:hover {
     border: 1px solid #000;
 }
 #compare-page .compare-card .btn-book:hover { background: #343a40; }
-
-/* --- Remove Button ('X') on Comparison Cards --- */
-#compare-page .compare-card .btn-remove {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 32px;
-    height: 32px;
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    text-align: center;
-    line-height: 28px; /* Adjust for perfect vertical centering */
-    font-size: 24px;
-    font-weight: 300;
-    text-decoration: none;
-    cursor: pointer;
-    z-index: 10;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-#compare-page .compare-card:hover .btn-remove {
-    opacity: 1;
-    transform: scale(1);
-}
-
-#compare-page .compare-card .btn-remove:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-    transform: scale(1.1);
-}
 
 
 /* --- Empty Comparison Card --- */
@@ -832,6 +798,52 @@ nav:hover {
     background: #343a40;
 }
 
+/* --- Add this to your existing compare.css file --- */
+
+/* --- Remove Button ('X') on Comparison Cards --- */
+#compare-page .compare-card {
+    position: relative; /* This is crucial for positioning the 'X' button */
+}
+
+#compare-page .compare-card .btn-remove {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    text-align: center;
+    line-height: 28px; /* Adjust for perfect vertical centering */
+    font-size: 24px;
+    font-weight: 300;
+    text-decoration: none;
+    cursor: pointer;
+    z-index: 10;
+
+    /* Initially hidden, appears on hover */
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#compare-page .compare-card:hover .btn-remove {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#compare-page .compare-card .btn-remove:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+}
+
+
+/* Insights page */
+
+/* ===== INSIGHTS PAGE ===== */
 
 /* ======================
   Insights page Styles
