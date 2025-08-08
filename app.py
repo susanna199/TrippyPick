@@ -1,8 +1,14 @@
 import os
 from dotenv import load_dotenv
 from supabase import create_client
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory  
 import math
+import ast 
+
+# --- This block calculates the absolute path to your project ---
+# This ensures that Flask knows exactly where your project folder is,
+# regardless of how you run the script.
+project_root = os.path.abspath(os.path.dirname(__file__))
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,7 +21,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- THE CRITICAL FIX IS ON THIS LINE ---
 # This explicitly configures the static folder path for Flask.
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+app = Flask(__name__, root_path=project_root)
 
 
 @app.route('/test')
@@ -71,54 +77,152 @@ def home():
         features=features,
         steps=steps
     )
-
 @app.route('/browse')
 def browse():
-    # This now correctly queries only the columns that exist
-    response = supabase.table('packages').select(
-        'package_id, package_name, destination, cost_per_package, themes, destination_img, days, nights'
-    ).execute()
-    packages = response.data if response.data else []
-    # 🧹 Clean the destination_img paths
+    # --- 1. Fetch data for the filter dropdowns ---
+    all_packages_response = supabase.table('packages').select('destination, days, agency_name, themes, cost_per_package').execute()
+    all_packages = all_packages_response.data if all_packages_response.data else []
+    
+    # This part for populating filters remains the same
+    destinations = sorted(list(set(p['destination'] for p in all_packages)))
+    durations = sorted(list(set(p['days'] for p in all_packages)))
+    agencies = sorted(list(set(p['agency_name'] for p in all_packages)))
+    
+    all_themes = set()
+    for p in all_packages:
+        try:
+            themes_list = ast.literal_eval(p['themes'])
+            all_themes.update(theme.strip() for theme in themes_list if theme.strip())
+        except (ValueError, SyntaxError):
+            continue
+    themes = sorted(list(all_themes))
+
+    costs = [p['cost_per_package'] for p in all_packages]
+    min_cost = min(costs) if costs else 0
+    max_cost = max(costs) if costs else 100000
+
+    # --- 2. Build and execute the query based on filters ---
+    query = supabase.table('packages').select('*')
+    selected_destination = request.args.get('destination')
+    selected_duration = request.args.get('duration')
+    selected_agency = request.args.get('agency')
+    selected_theme = request.args.get('theme')
+    selected_max_cost = request.args.get('max_cost')
+
+    if selected_destination:
+        query = query.eq('destination', selected_destination)
+    if selected_duration:
+        query = query.eq('days', int(selected_duration))
+    if selected_agency:
+        query = query.eq('agency_name', selected_agency)
+    if selected_max_cost:
+        query = query.lte('cost_per_package', int(selected_max_cost))
+
+    filtered_packages_response = query.execute()
+    packages = filtered_packages_response.data if filtered_packages_response.data else []
+
+    # --- 3. Apply the theme filter in Python ---
+    if selected_theme:
+        final_packages = []
+        for package in packages:
+            try:
+                package_themes = ast.literal_eval(package['themes'])
+                if package_themes and package_themes[0] == selected_theme:
+                    final_packages.append(package)
+            except (ValueError, SyntaxError, IndexError):
+                continue
+        packages = final_packages
+
+    # --- NEW AND CORRECTED: Fix image paths on the FINAL list ---
+    # This loop now runs on the 'packages' list that will actually be displayed.
     for pkg in packages:
-        if pkg.get("destination_img", "").startswith("static/"):
-            pkg["destination_img"] = pkg["destination_img"].replace("static/", "", 1).strip()
-
-    return render_template("browse.html", packages=packages)
-
-# @app.route('/package/<int:package_id>')
-# def package_detail(package_id):
-#     # (Your package_detail function remains here)
-#     response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
-#     if not response.data:
-#         return "Package not found", 404
-#     package = response.data
-#     return render_template("package_detail.html", package=package)
+        # Check if the key exists and the value is a string before trying to replace
+        if isinstance(pkg.get('destination_img'), str) and pkg['destination_img'].startswith("static/"):
+            pkg['destination_img'] = pkg['destination_img'].replace("static/", "", 1)
+    
+    # --- 4. Render the page ---
+    return render_template(
+        "browse.html",
+        packages=packages, # This list now has the corrected image paths
+        destinations=destinations,
+        durations=durations,
+        agencies=agencies,
+        themes=themes,
+        min_cost=min_cost,
+        max_cost=max_cost,
+        selected_filters=request.args 
+    )
 
 @app.route('/package/<int:package_id>')
 def package_detail(package_id):
-    # --- THIS QUERY IS NOW REVERTED ---
-    # It fetches only from the 'packages' table to avoid the join error.
+    # --- 1. Fetch the package details ---
     pkg_response = supabase.table('packages').select('*').eq('package_id', package_id).single().execute()
     
-    # If the package doesn't exist, show a 404 error
     if not pkg_response.data:
         return "Package not found", 404
     package = pkg_response.data
 
-    # Fetch the related itinerary for that package
-    itinerary_response = supabase.table('itinerary').select('*').eq('package_id', package_id).execute()
+    # --- 2. Fetch the related itinerary ---
+    itinerary_response = supabase.table('itinerary').select('*').eq('package_id', package_id).order('day_number', desc=False).execute()
     itinerary = itinerary_response.data if itinerary_response.data else []
 
-    # Pass both package and itinerary to the template
+    # --- 3. Fetch and process the corresponding agency's analytics data ---
+    agency_id = package.get('agency_id')
+    agency_data = {}
+    if agency_id:
+        agency_response = supabase.table('agency').select('*').eq('agency_id', agency_id).single().execute()
+        if agency_response.data:
+            agency_data = agency_response.data
+
+            # --- Rating Percentages ---
+            total_reviews = agency_data.get('total_review_count', 0)
+            if total_reviews > 0:
+                agency_data['five_star_percent'] = round((agency_data.get('5_star_count', 0) / total_reviews) * 100)
+                agency_data['four_star_percent'] = round((agency_data.get('4_star_count', 0) / total_reviews) * 100)
+                agency_data['three_star_percent'] = round((agency_data.get('3_star_count', 0) / total_reviews) * 100)
+                agency_data['two_star_percent'] = round((agency_data.get('2_star_count', 0) / total_reviews) * 100)
+                agency_data['one_star_percent'] = round((agency_data.get('1_star_count', 0) / total_reviews) * 100)
+            else:
+                agency_data['five_star_percent'] = agency_data['four_star_percent'] = agency_data['three_star_percent'] = agency_data['two_star_percent'] = agency_data['one_star_percent'] = 0
+
+            # --- Keyword Parsing ---
+            try:
+                agency_data['top_positive_keywords'] = ast.literal_eval(agency_data.get('top_positive_keywords', '[]'))[:5]
+                agency_data['top_negative_keywords'] = ast.literal_eval(agency_data.get('top_negative_keywords', '[]'))[:5]
+            except (ValueError, SyntaxError):
+                agency_data['top_positive_keywords'] = []
+                agency_data['top_negative_keywords'] = []
+
+            # --- Trust Score Calculation ---
+            pos_percent = agency_data.get('positive_reviews_percentage', 0)
+            neu_percent = agency_data.get('neutral_reviews_percentage', 0)
+            neg_percent = agency_data.get('negative_reviews_percentage', 0)
+
+            trust_score = (pos_percent * 1.0) + (neu_percent * 0.5) - (neg_percent * 1.5)
+            agency_data['trust_score'] = max(0, min(100, trust_score))
+
+            # --- Review Quality Score Calculation ---
+            total_keywords = len(agency_data['top_positive_keywords']) + len(agency_data['top_negative_keywords'])
+            total_keywords = min(total_keywords, 10)  # Cap at 10
+
+            review_quality_score = (pos_percent * 0.4) + (neu_percent * 0.2) + ((total_keywords / 10) * 40)
+            agency_data['review_quality_score'] = round(max(0, min(100, review_quality_score)))
+
+    # --- 4. Pass all three data objects to the template ---
     return render_template(
         "package_detail.html", 
         package=package,
-        itinerary=itinerary
+        itinerary=itinerary,
+        agency=agency_data
     )
 
-
-# ... (all your other routes like /compare, /insights, etc., remain here) ...
+# --- NEW ROUTE TO MANUALLY SERVE IMAGES ---
+@app.route('/static/images/<filename>')
+def serve_image(filename):
+    # This route will find the 'static/images' directory relative to the project root
+    # and send the requested file from it.
+    image_dir = os.path.join(project_root, 'static', 'images')
+    return send_from_directory(image_dir, filename)
 
 
 def calculate_value_score(package):
