@@ -1,19 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{{ package.package_name }} | TrippyPick{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  {# Link to the new external CSS file #}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-{% endblock %}
-
 {% block content %}
 <div id="package-detail-page">
   <div class="detail-container">
     
     <div class="main-content">
       <div class="package-header">
+        <p class="breadcrumbs">Home / Browse / {{ package.package_name }}</p>
         <h1>{{ package.package_name }}</h1>
+        <div class="info-bar">
+          <span><i class="fas fa-location-dot"></i> {{ package.destination }}</span>
+          <span><i class="fas fa-calendar-days"></i> {{ package.days }} days, {{ package.nights }} nights</span>
+        </div>
       </div>
 
       <div class="package-image">
@@ -24,53 +23,53 @@
         {% endif %}
       </div>
 
-      {# --- TAB STRUCTURE STARTS HERE --- #}
+      {# --- TAB STRUCTURE --- #}
       <div class="content-tabs">
           <div class="tab-header">
               <button class="tab-link active" data-tab="overview">Overview</button>
               <button class="tab-link" data-tab="itinerary">Itinerary</button>
-              <button class="tab-link" data-tab="reviews">Reviews</button>
+              <button class="tab-link" data-tab="reviews">Agency Analytics</button>
           </div>
           
           <div class="tab-content-container">
               {# --- Overview Tab Content --- #}
               <div id="overview" class="tab-pane active">
-                  <div class="description-card">
-                      <h2>Description</h2>
-                      <p>{{ package.description or 'No description available for this package yet.' }}</p>
-                  </div>
-                  <div class="highlights-card">
-                      <h2>Highlights</h2>
-                      <ul>
-                        {% for highlight in (package.highlights or '').split(',') %}
-                          {% if highlight.strip() %}
-                            <li><i class="fas fa-check"></i> {{ highlight.strip() }}</li>
-                          {% endif %}
-                        {% endfor %}
-                      </ul>
-                  </div>
-                  <div class="inclusions-grid">
-                      <div class="inclusion-card included">
-                          <h3>What's Included</h3>
-                          <ul>
-                            {% for item in (package.inclusions_detailed or '').split(',') %}
-                                {% if item.strip() %}
-                                  <li><i class="fas fa-check"></i> {{ item.strip() }}</li>
-                                {% endif %}
-                            {% endfor %}
-                          </ul>
-                      </div>
-                      <div class="inclusion-card not-included">
-                          <h3>Not Included</h3>
-                          <ul>
-                            {% for item in (package.exclusions_detailed or '').split(',') %}
-                                {% if item.strip() %}
-                                  <li><i class="fas fa-times"></i> {{ item.strip() }}</li>
-                                {% endif %}
-                            {% endfor %}
-                          </ul>
-                      </div>
-                  </div>
+                <div class="description-card">
+                    <h2>Description</h2>
+                    <p>{{ package.description or 'No description available for this package yet.' }}</p>
+                </div>
+                <div class="highlights-card">
+                    <h2>Highlights</h2>
+                    <ul>
+                      {% for highlight in (package.highlights or '').split(',') %}
+                        {% if highlight.strip() %}
+                          <li><i class="fas fa-check"></i> {{ highlight.strip() }}</li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                </div>
+                <div class="inclusions-grid">
+                    <div class="inclusion-card included">
+                        <h3>What's Included</h3>
+                        <ul>
+                          {% for item in (package.inclusions_detailed or '').split(',') %}
+                              {% if item.strip() %}
+                                <li><i class="fas fa-check"></i> {{ item.strip() }}</li>
+                              {% endif %}
+                          {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="inclusion-card not-included">
+                        <h3>Not Included</h3>
+                        <ul>
+                          {% for item in (package.exclusions_detailed or '').split(',') %}
+                            {% if item.strip() %}
+                              <li><i class="fas fa-times"></i> {{ item.strip() }}</li>
+                            {% endif %}
+                          {% endfor %}
+                        </ul>
+                    </div>
+                </div>
               </div>
 
               {# --- Itinerary Tab Content --- #}
@@ -90,38 +89,72 @@
                   {% endif %}
               </div>
 
-              {# --- Reviews Tab Content --- #}
+              {# --- Agency Analytics Tab Content --- #}
               <div id="reviews" class="tab-pane">
-                  <div class="reviews-summary">
-                      <div class="overall-rating">
-                          <div class="rating-value">4.8</div>
-                          <div class="stars">★★★★☆</div>
-                          <div class="review-count">124 reviews</div>
+                  {% if agency and agency.total_review_count > 0 %}
+                  <div class="analytics-grid">
+                      <div class="analytics-card rating-card">
+                          <h3>Rating Distribution</h3>
+                          <div class="reviews-summary">
+                              <div class="overall-rating">
+                                  <div class="rating-value">
+                                    <span>{{ "%.1f"|format(agency.avg_rating) }}</span>
+                                    <i class="fas fa-star star-icon"></i>
+                                  </div>
+                                  <div class="review-count">{{ agency.total_review_count }} reviews</div>
+                              </div>
+                              <div class="rating-breakdown">
+                                  <div class="bar-row"><span>5★</span><div class="bar-container"><div class="bar-fill" style="width: {{ agency.five_star_percent }}%;"></div></div><span>{{ agency.five_star_percent }}%</span></div>
+                                  <div class="bar-row"><span>4★</span><div class="bar-container"><div class="bar-fill" style="width: {{ agency.four_star_percent }}%;"></div></div><span>{{ agency.four_star_percent }}%</span></div>
+                                  <div class="bar-row"><span>3★</span><div class="bar-container"><div class="bar-fill" style="width: {{ agency.three_star_percent }}%;"></div></div><span>{{ agency.three_star_percent }}%</span></div>
+                                  <div class="bar-row"><span>2★</span><div class="bar-container"><div class="bar-fill" style="width: {{ agency.two_star_percent }}%;"></div></div><span>{{ agency.two_star_percent }}%</span></div>
+                                  <div class="bar-row"><span>1★</span><div class="bar-container"><div class="bar-fill" style="width: {{ agency.one_star_percent }}%;"></div></div><span>{{ agency.one_star_percent }}%</span></div>
+                              </div>
+                          </div>
                       </div>
-                      <div class="rating-breakdown">
-                          <div class="bar-row"><span class="bar-label">5★</span><div class="bar-container"><div class="bar-fill" style="width: 70%;"></div></div><span class="bar-percent">70%</span></div>
-                          <div class="bar-row"><span class="bar-label">4★</span><div class="bar-container"><div class="bar-fill" style="width: 20%;"></div></div><span class="bar-percent">20%</span></div>
-                          <div class="bar-row"><span class="bar-label">3★</span><div class="bar-container"><div class="bar-fill" style="width: 8%;"></div></div><span class="bar-percent">8%</span></div>
-                          <div class="bar-row"><span class="bar-label">2★</span><div class="bar-container"><div class="bar-fill" style="width: 2%;"></div></div><span class="bar-percent">2%</span></div>
-                          <div class="bar-row"><span class="bar-label">1★</span><div class="bar-container"><div class="bar-fill" style="width: 1%;"></div></div><span class="bar-percent">1%</span></div>
+
+                      <div class="analytics-card keywords-card">
+                          <h3><i class="fas fa-smile"></i> Top Positive Keywords</h3>
+                          <div class="keywords-container">
+                            {% for keyword in agency.top_positive_keywords %}
+                              <span class="keyword positive">{{ keyword }}</span>
+                            {% else %}
+                              <p>No positive keywords found.</p>
+                            {% endfor %}
+                          </div>
                       </div>
+
+                      <div class="analytics-card keywords-card">
+                          <h3><i class="fas fa-frown"></i> Top Negative Keywords</h3>
+                          <div class="keywords-container">
+                            {% for keyword in agency.top_negative_keywords %}
+                              <span class="keyword negative">{{ keyword }}</span>
+                            {% else %}
+                              <p>No negative keywords found.</p>
+                            {% endfor %}
+                          </div>
+                      </div>
+                      
+                      <div class="analytics-card trust-score-card">
+                          <h3>Trust Score</h3>
+                          <div class="score-circle">
+                              {{ agency.trust_score | int }}<span>/100</span>
+                          </div>
+                          <p>Based on review sentiment and rating distribution.</p>
+                      </div>
+
+                      <div class="analytics-card quality-score-card">
+                          <h3>Review Quality Score</h3>
+                          <div class="score-circle">
+                            {{ agency.review_quality_score | int }}<span>/100</span>
+                          </div>
+                          <p>Based on sentiment clarity and keyword richness.</p>
+                      </div>
+
                   </div>
-                  <div class="review-card">
-                      <div class="avatar">👤</div>
-                      <div class="review-content">
-                          <span class="author">John Doe</span><span class="date">2 weeks ago</span>
-                          <div class="stars">★★★★★</div>
-                          <p>Amazing experience! The tour guide was knowledgeable and the accommodations were excellent. The sunrise at Mount Batur was absolutely breathtaking. Highly recommend this package!</p>
-                      </div>
-                  </div>
-                   <div class="review-card">
-                      <div class="avatar">👤</div>
-                      <div class="review-content">
-                          <span class="author">Jane Smith</span><span class="date">3 weeks ago</span>
-                          <div class="stars">★★★★☆</div>
-                          <p>A really well-organized trip. The Kecak dance was a highlight. Only knocking one star off because the transport was a bit late on one of the days, but overall a fantastic trip.</p>
-                      </div>
-                  </div>
+                  {% else %}
+                    <p>No agency analytics are available for this package.</p>
+                  {% endif %}
               </div>
           </div>
       </div>
@@ -129,51 +162,46 @@
 
     {# --- SIDEBAR --- #}
     <div class="sidebar">
-      <div class="sidebar-card price-card">
+
+      <div class="sidebar-card price-card centered">
         <div class="price-top">
           <span class="current-price">₹{{ "{:,.0f}".format(package.cost_per_package) }}</span>
-          {% if package.original_cost and package.original_cost > package.cost_per_package %}
-            <span class="original-price">₹{{ "{:,.0f}".format(package.original_cost) }}</span>
-            {% set saved = package.original_cost - package.cost_per_package %}
-            <span class="save-badge">Save ₹{{ "{:,.0f}".format(saved) }}</span>
-          {% endif %}
         </div>
         <p class="per-person">per person</p>
-        <button class="btn-book-now">Book Now</button>
+
+        <a href="{{ agency.agency_url or '#' }}" target="_blank" class="btn-book-now">Book Now</a>
         <a href="{{ url_for('compare', ids=package.package_id) }}" class="btn-add-compare">Add to Compare</a>
         <p class="cancellation">Free cancellation up to 48 hours</p>
       </div>
 
-      <div class="sidebar-card provider-card">
-          <h3>Travel Provider</h3>
-          <div class="provider-info">
-              <i class="fas fa-user-circle avatar"></i>
-              <div class="provider-details">
-                  <span class="provider-name">{{ package.agency_name }}</span>
-                  {# Add rating and followers if available #}
-              </div>
+      <div class="sidebar-card provider-card centered">
+        <h3>Travel Provider</h3>
+        <div class="provider-info">
+          <i class="fas fa-user-circle avatar"></i>
+          <div class="provider-details">
+            <span class="provider-name">{{ package.agency_name }}</span>
           </div>
-          <button class="btn-view-profile">View Profile</button>
+        </div>
+        <button class="btn-view-profile">View Profile</button>
       </div>
 
-      <div class="sidebar-card quick-facts-card">
+      <div class="sidebar-card quick-facts-card centered">
         <h3>Quick Facts</h3>
         <ul>
           <li>
-            <span><i class="fas fa-clock"></i> Duration</span>
+            <span><i class="fas fa-clock"></i> Duration</span><br>
             <strong>{{ package.days }} days, {{ package.nights }} nights</strong>
           </li>
           <li>
-            <span><i class="fas fa-users"></i> Group Size</span>
+            <span><i class="fas fa-users"></i> Group Size</span><br>
             <strong>Max {{ package.group_size }} people</strong>
           </li>
         </ul>
       </div>
-    </div>
 
+      </div>
   </div>
 </div>
 
-{# Link to the new external JavaScript file #}
 <script src="{{ url_for('static', filename='js/package-detail.js') }}"></script>
 {% endblock %}
