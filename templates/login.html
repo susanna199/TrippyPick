@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sign In | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="admin-signin-page"> {# Reusing the same styling for consistency #}
+  <div class="signin-container">
+    <div class="card signin-card">
+      <h1>Sign In</h1>
+      <p class="text-center mb-4 text-muted">Welcome back! Please enter your details.</p>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} mb-3" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="mb-3">
+          <label for="email_username" class="form-label">Email or Username</label>
+          <input type="text" class="form-control" id="email_username" name="email_username" placeholder="Enter your email or username" required>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-dark btn-signin">Sign In</button>
+      </form>
+
+      <div class="text-center mt-4">
+        <p class="text-muted">Want to be listed on our website? 
+          <a href="{{ url_for('agency_signup') }}">Join us</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
