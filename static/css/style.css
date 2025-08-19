@@ -1360,6 +1360,144 @@ nav:hover {
     border-color: #000;
 }
 
+/* ======================
+   Admin Dashboard Styles
+ ====================== */
+#admin-dashboard {
+    padding: 40px 60px;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+#admin-dashboard h1 {
+    font-weight: 800;
+}
+
+#admin-dashboard .table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#admin-dashboard .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+#admin-dashboard .table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+#admin-dashboard .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+#admin-dashboard .status-badge {
+    padding: 0.3em 0.6em;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+#admin-dashboard .status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+#admin-dashboard .status-approved {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+#admin-dashboard .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+#admin-dashboard .verify-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* ======================
+   Admin Dashboard Styles
+ ====================== */
+#admin-dashboard {
+    padding: 40px 60px;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+#admin-dashboard h1, #admin-dashboard h3 {
+    font-weight: 700;
+}
+
+#admin-dashboard .table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-size: 0.9rem;
+}
+
+#admin-dashboard .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#admin-dashboard .table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+#admin-dashboard .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+#admin-dashboard .status-badge {
+    padding: 0.3em 0.6em;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+#admin-dashboard .status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+#admin-dashboard .status-approved {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+#admin-dashboard .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+#admin-dashboard .verify-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* Tab styling */
+#admin-dashboard .nav-tabs .nav-link {
+    color: #555;
+    font-weight: 600;
+}
+#admin-dashboard .nav-tabs .nav-link.active {
+    color: #000;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+
 /* ==========================
   Caption Recommender Page
 ========================== */
@@ -1749,6 +1887,9 @@ nav:hover {
 .price-card .current-price {
   font-size: 36px;
   font-weight: 700;
+  display: block; /* Ensures it's treated like a block element */
+  text-align: center;
+  margin: 0 auto;  /* Horizontally centers if it’s inline-block */
 }
 .price-card .original-price {
   font-size: 18px;
@@ -2033,6 +2174,7 @@ nav:hover {
     align-items: baseline;
     gap: 10px;
     margin-bottom: 4px;
+    text-align: center;
 }
 #package-detail-page .sidebar .price-card .current-price { font-size: 2rem; font-weight: 700; }
 #package-detail-page .sidebar .price-card .original-price { font-size: 1.2rem; color: #6c757d; text-decoration: line-through; }
@@ -2059,3 +2201,457 @@ nav:hover {
 #package-detail-page .sidebar .quick-facts-card li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f3f5; }
 #package-detail-page .sidebar .quick-facts-card li:last-child { border-bottom: none; }
 #package-detail-page .sidebar .quick-facts-card li span { display: flex; align-items: center; gap: 8px; color: #6c757d; }
+
+
+/* ===== Browse Page Filter Enhancements ===== */
+
+/* Style for the new filter labels */
+#browse-page .filters label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #333;
+}
+/* First label doesn't need top margin */
+#browse-page .filters label:first-of-type {
+  margin-top: 0;
+}
+
+/* Styling for the new cost slider */
+.cost-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  margin-bottom: 15px;
+}
+.cost-slider:hover {
+  opacity: 1;
+}
+.cost-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+}
+.cost-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+}
+
+/* Style for the new "Clear Filters" button */
+.clear-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  text-decoration: underline;
+}
+
+
+/* ===== Card Button Alignment Fix ===== */
+
+/* This will center the buttons on the package cards */
+#browse-page .buttons {
+  display: flex;
+  justify-content: center; /* Changed from space-between */
+  gap: 10px; /* Adds space between the centered buttons */
+  margin-top: 10px;
+}
+
+/* ===== Browse Card Enhancements ===== */
+
+/* Style for the new agency name on the card */
+#browse-page .card .agency-name {
+  font-size: 14px;
+  color: #555;
+  margin-top: -5px; /* Pulls it a bit closer to the destination */
+  margin-bottom: 10px;
+}
+
+#browse-page .card .agency-name i {
+  margin-right: 5px;
+}
+
+
+/* Center align the text within the details and compare buttons */
+#browse-page .details-btn,
+#browse-page .compare-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ==========================
+  Package Detail Page - TABS
+========================== */
+.content-tabs {
+  background: white;
+  border-radius: 12px;
+  padding: 5px;
+  margin-top: 20px;
+}
+.tab-header {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+  padding: 10px 20px 0 20px;
+}
+.tab-link {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-link.active {
+  color: #000;
+  border-bottom-color: #000;
+}
+.tab-content-container {
+  padding: 25px;
+}
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+
+/* ==========================
+  Package Detail Page - Agency Analytics
+========================== */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.analytics-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+}
+.analytics-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.rating-card {
+  grid-column: 1 / -1; /* Make this card span the full width */
+}
+
+.reviews-summary {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.overall-rating {
+  text-align: center;
+  flex-basis: 120px;
+  flex-shrink: 0;
+}
+.rating-value {
+  font-size: 40px;
+  font-weight: 700;
+}
+.review-count {
+  font-size: 14px;
+  color: #6c757d;
+}
+.rating-breakdown {
+  flex-grow: 1;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.bar-row span { color: #6c757d; }
+.bar-row .bar-label { width: 30px; }
+.bar-container {
+  flex-grow: 1;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background-color: #ffc107; /* Yellow for stars */
+  border-radius: 4px;
+}
+
+.keywords-card h3 i {
+  margin-right: 8px;
+}
+.keywords-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.keyword {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.keyword.positive {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+.keyword.negative {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.trust-score-card {
+  text-align: center;
+}
+.trust-score-card .score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  border: 8px solid;
+  border-color: #198754; /* Green for high score */
+}
+.trust-score-card .score-circle span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #6c757d;
+  margin-left: 2px;
+}
+.trust-score-card p {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+/* ==========================
+  Package Detail Page - TABS & ITINERARY
+========================== */
+.content-tabs {
+  background: white;
+  border-radius: 12px;
+  padding: 5px;
+  margin-top: 20px;
+}
+.tab-header {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+  padding: 10px 20px 0 20px;
+}
+.tab-link {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-link.active {
+  color: #000;
+  border-bottom-color: #000;
+}
+.tab-content-container {
+  padding: 25px;
+}
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+.itinerary-day {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+.itinerary-day:last-child {
+  border-bottom: none;
+}
+.day-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+.day-details h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.day-details p {
+  color: #495057;
+  line-height: 1.6;
+}
+
+
+/* ==========================
+  Package Detail Page - Agency Analytics
+========================== */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.analytics-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+}
+.analytics-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.rating-card {
+  grid-column: 1 / -1; /* Make this card span the full width */
+}
+.reviews-summary {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.overall-rating {
+  text-align: center;
+  flex-basis: 120px;
+  flex-shrink: 0;
+}
+.rating-value {
+  font-size: 40px;
+  font-weight: 700;
+}
+.review-count {
+  font-size: 14px;
+  color: #6c757d;
+}
+.rating-breakdown {
+  flex-grow: 1;
+}
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.bar-row span { color: #6c757d; }
+.bar-row .bar-label { width: 30px; }
+.bar-container {
+  flex-grow: 1;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  margin: 0 10px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background-color: #ffc107; /* Yellow for stars */
+  border-radius: 4px;
+}
+.keywords-card h3 i {
+  margin-right: 8px;
+}
+.keywords-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.keyword {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.keyword.positive {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+.keyword.negative {
+  background-color: #f8d7da;
+  color: #842029;
+}
+.quality-score-card {
+  text-align: center;
+}
+.quality-score-card .score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  border: 8px solid;
+  border-color: #198754; /* Green for high score */
+}
+.quality-score-card .score-circle span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #6c757d;
+  margin-left: 2px;
+}
+.quality-score-card p {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.star-icon {
+  color: gold;
+  font-size: 2rem;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+
+.centered {
+  text-align: center;
+}
+
+.centered ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.centered ul li {
+  margin-bottom: 10px;
+}

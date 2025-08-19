@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Agency Sign Up | TrippyPick{% endblock %}
+
+{% block content %}
+<div id="admin-signin-page"> {# Reusing the same styling #}
+  <div class="signin-container">
+    <div class="card signin-card">
+      <h1>Join TrippyPick</h1>
+      <p class="text-center mb-4 text-muted">Register your agency to get listed.</p>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} mb-3" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('agency_signup') }}">
+        <div class="mb-3">
+          <label for="agency_name" class="form-label">Agency Name</label>
+          <input type="text" class="form-control" id="agency_name" name="agency_name" placeholder="Your Agency Name" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="contact@agency.com" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+        </div>
+        <div class="mb-4">
+          <label for="url" class="form-label">Website URL</label>
+          <input type="url" class="form-control" id="url" name="url" placeholder="https://your-agency.com" required>
+        </div>
+        <button type="submit" class="btn btn-dark btn-signin">Register</button>
+      </form>
+
+      <div class="text-center mt-4">
+        <p class="text-muted">Already have an account? 
+          <a href="{{ url_for('login') }}">Log In</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -14,7 +14,9 @@
 <body>
   <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">TrippyPick</a>
+        <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" style="width: 220px; height: 70px;">
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,7 +26,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('browse') }}">Browse</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('compare') }}">Compare</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('insights') }}">Insights</a></li>
-                <li class="nav-item"><a class="btn btn-dark ms-3" href="{{ url_for('admin_signin') }}">Sign In</a></li>
+                <li class="nav-item"><a class="btn btn-dark ms-3" href="{{ url_for('login') }}">Sign In</a></li>
             </ul>
         </div>
     </div>

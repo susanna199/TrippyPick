@@ -4,33 +4,61 @@
 {% block content %}
 <section id="browse-page">
   <div class="browse-container">
+    
     <div class="filters">
       <h2>Filters</h2>
-      <input class="search-input" type="text" placeholder="Search destination" />
-      <select class="dropdown">
-        <option>Any Duration</option>
-        <option>1-3 Days</option>
-        <option>4-6 Days</option>
-        <option>7+ Days</option>
-      </select>
-      <select class="dropdown">
-        <option>Any Theme</option>
-        <option>Adventure</option>
-        <option>Beach</option>
-        <option>Culture</option>
-      </select>
-      <button class="apply-btn">Apply Filters</button>
+      <form method="GET" action="{{ url_for('browse') }}">
+        
+        <label for="destination">Destination</label>
+        <select id="destination" name="destination" class="dropdown">
+          <option value="">Any Destination</option>
+          {% for dest in destinations %}
+            <option value="{{ dest }}" {% if dest == selected_filters.get('destination') %}selected{% endif %}>{{ dest }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="duration">Duration (Days)</label>
+        <select id="duration" name="duration" class="dropdown">
+          <option value="">Any Duration</option>
+          {% for d in durations %}
+            <option value="{{ d }}" {% if d|string == selected_filters.get('duration') %}selected{% endif %}>{{ d }} Days</option>
+          {% endfor %}
+        </select>
+        
+        <label for="agency">Agency</label>
+        <select id="agency" name="agency" class="dropdown">
+          <option value="">Any Agency</option>
+          {% for agency in agencies %}
+            <option value="{{ agency }}" {% if agency == selected_filters.get('agency') %}selected{% endif %}>{{ agency }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="theme">Theme</label>
+        <select id="theme" name="theme" class="dropdown">
+          <option value="">Any Theme</option>
+          {% for t in themes %}
+            <option value="{{ t }}" {% if t == selected_filters.get('theme') %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="max_cost">Max Price (₹<span id="cost-value">{{ selected_filters.get('max_cost', max_cost) | int }}</span>)</label>
+        <input type="range" id="cost-slider" name="max_cost" class="cost-slider" 
+               min="{{ min_cost }}" 
+               max="{{ max_cost }}" 
+               value="{{ selected_filters.get('max_cost', max_cost) }}">
+
+        <button type="submit" class="apply-btn">Apply Filters</button>
+        <a href="{{ url_for('browse') }}" class="clear-btn">Clear Filters</a>
+      </form>
     </div>
+
     <div class="package-grid">
       <div class="cards">
         {% for package in packages %}
         <div class="card">
             <div class="image-placeholder">
-                {# FINAL WORKING VERSION: url_for() now works because app.py is fixed #}
                 {% if package.destination_img %}
-                    <!-- <img src="{{ url_for('static', filename=package.destination_img.replace('static/', '')) }}" alt=" "> -->
                     <img src="{{ url_for('static', filename=package.destination_img) }}" alt=" ">
-
                 {% else %}
                     🏔️
                 {% endif %}
@@ -38,10 +66,11 @@
 
             <h3>{{ package.package_name }}</h3>
             <p><i class="fas fa-location-dot"></i> {{ package.destination }}</p>
+            <p class="agency-name"><i class="fas fa-user"></i> {{ package.agency_name }}</p>
             <div class="tags">
-                {% set first_theme = (package.themes.split(',')[0] | replace("[", "") | replace("]", "") | replace("'", "")).strip() %}
-                <span class="tag">{{ first_theme }}</span>
-                <span class="tag">{{ package.days }}D/{{ package.nights }}N</span>
+            {% set first_theme = (package.themes.split(',')[0] | replace("[", "") | replace("]", "") | replace("'", "")).strip() %}
+            <span class="tag">{{ first_theme }}</span>
+            <span class="tag">{{ package.days }}D/{{ package.nights }}N</span>
             </div>
             <div class="price">
                 <span class="current">₹{{ "{:,.0f}".format(package.cost_per_package) }}</span>
@@ -51,9 +80,20 @@
                 <a href="{{ url_for('compare', ids=package.package_id) }}" class="compare-btn">Compare</a>
             </div>
         </div>
+        {% else %}
+          <p>No packages found matching your criteria. Try clearing the filters.</p>
         {% endfor %}
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  const costSlider = document.getElementById('cost-slider');
+  const costValue = document.getElementById('cost-value');
+
+  costSlider.addEventListener('input', (event) => {
+    costValue.textContent = event.target.value;
+  });
+</script>
 {% endblock %}

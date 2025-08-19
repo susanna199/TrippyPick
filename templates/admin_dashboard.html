@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | TrippyPick{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="admin-dashboard">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Admin Dashboard</h1>
+        <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-dark">Logout</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} mb-3" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="agencies-tab" data-bs-toggle="tab" data-bs-target="#agencies" type="button" role="tab">New Agency Listings</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" type="button" role="tab">Package Submissions</button>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+      <!-- Agency Submissions Tab -->
+      <div class="tab-pane fade show active" id="agencies" role="tabpanel">
+        <h3>Pending Agency Approvals</h3>
+        <form method="POST" action="{{ url_for('verify_agencies') }}">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Agency Name</th>
+                  <th>Email</th>
+                  <th>URL</th>
+                  <th>Approved</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for agency in agency_submissions %}
+                <tr>
+                  <td>
+                    {% if not agency.approved %}
+                    <input class="form-check-input" type="checkbox" name="selected_agencies" value="{{ agency.id }}">
+                    {% endif %}
+                  </td>
+                  <td>{{ agency.agencyname }}</td>
+                  <td>{{ agency.email }}</td>
+                  <td><a href="{{ agency.url }}" target="_blank" rel="noopener noreferrer">View Site</a></td>
+                  <td>
+                    {% if agency.approved %}
+                      <span class="status-badge status-approved">Yes</span>
+                    {% else %}
+                      <span class="status-badge status-pending">No</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ agency.status | replace("_", " ") | title }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center">No new agency submissions.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="verify-section">
+            <button type="submit" class="btn btn-primary">Verify Selected Agencies</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Package Submissions Tab -->
+      <div class="tab-pane fade" id="packages" role="tabpanel">
+        <h3>Pending Package Submissions</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                <th>Package Name</th>
+                <th>Agency</th>
+                <th>Destination</th>
+                <th>Cost</th>
+                <th>Inclusions (Summary)</th>
+                <th>Themes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for package in package_submissions %}
+                <tr>
+                <td>{{ package.package_name }}</td>
+                <td>{{ package.agency_name }}</td>
+                <td>{{ package.destination }}</td>
+                <td>₹{{ "{:,.0f}".format(package.cost_per_package) }}</td>
+                <td>
+                    {% if package.inclusions %}
+                    {{ package.inclusions }}
+                    {% else %}
+                    <a href="{{ url_for('run_inclusion_summarizer', submission_id=package.id) }}" class="btn btn-sm btn-outline-secondary">Run Summarizer</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if package.themes %}
+                    {{ package.themes }}
+                    {% else %}
+                    <a href="{{ url_for('run_theme_classifier', submission_id=package.id) }}" class="btn btn-sm btn-outline-info">Run Classifier</a>
+                    {% endif %}
+                </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center">No new package submissions.</td></tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
