@@ -5,17 +5,15 @@
   {{ super() }}
   <style>
     .dashboard-nav { border-bottom: 1px solid #dee2e6; margin-bottom: 2rem; }
-    .dashboard-nav .nav-link { color: #6c757d; border: none; padding: 0.8rem 1.2rem; }
-    .dashboard-nav .nav-link.active { color: #000; font-weight: 600; border-bottom: 2px solid #000; }
+    .dashboard-nav .nav-link.active { font-weight: 600; }
     .status-card { background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 2rem; border-radius: 0.5rem; }
-    hr { margin: 3rem 0; }
-    .itinerary-day-form { border: 1px solid #e9ecef; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem; }
+    .dashboard-section-title { margin-top: 2.5rem; }
+    .table { font-size: 0.9rem; }
   </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5" data-package-submitted="{{ package_submitted }}">
-  
+<div class="container py-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Welcome, {{ session.agency_name }}</h1>
     <a href="{{ url_for('agency_logout') }}" class="btn btn-outline-dark">Logout</a>
@@ -24,8 +22,9 @@
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
-        <div class="alert alert-{{ category }} mb-3" role="alert">
+        <div class="alert alert-{{ category }} alert-dismissible fade show mb-3" role="alert">
           {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       {% endfor %}
     {% endif %}
@@ -33,89 +32,96 @@
 
   <ul class="nav nav-tabs dashboard-nav" id="agencyTab" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">Dashboard</button>
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dashboard" type="button">Dashboard</button>
     </li>
     {% if submission.approved %}
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="add-package-tab" data-bs-toggle="tab" data-bs-target="#add-package" type="button" role="tab">Add Package</button>
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view-packages" type="button">View Packages</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view-itineraries" type="button">View Itineraries</button>
     </li>
     {% endif %}
   </ul>
 
-  <div class="tab-content" id="agencyTabContent">
-    
+  <div class="tab-content">
     <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
-      <h3>Your Application Status</h3>
+      <h3 class="dashboard-section-title">Your Application Status</h3>
       <div class="status-card">
         <p><strong>Approval Status:</strong> 
           {% if submission.approved %}
             <span class="badge bg-success">Approved</span>
-            <p class="mt-3">Congratulations! Your agency has been verified. You can now proceed to the "Add Package" tab to submit your travel packages for review.</p>
+            <p class="mt-3">Congratulations! You can now view and add packages.</p>
           {% else %}
             <span class="badge bg-warning text-dark">Pending Admin Approval</span>
-            <p class="mt-3 text-muted">Your application is awaiting review by an administrator. You will be notified once it is approved.</p>
           {% endif %}
         </p>
-        <p><strong>Listing Status:</strong> <span class="text-capitalize">{{ submission.status | replace("_", " ") }}</span></p>
       </div>
     </div>
 
     {% if submission.approved %}
-    <div class="tab-pane fade" id="add-package" role="tabpanel">
-      
-      {% if not package_submitted %}
-        
-        <h3>Step 1: Submit a New Package</h3>
-        <form method="POST" action="{{ url_for('add_package') }}" enctype="multipart/form-data">
-          <div class="row">
-            <div class="col-md-6 mb-3"><label for="package_name" class="form-label">Package Name</label><input type="text" class="form-control" id="package_name" name="package_name" required></div>
-            <div class="col-md-6 mb-3"><label for="destination" class="form-label">Destination</label><input type="text" class="form-control" id="destination" name="destination" required></div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3"><label for="cost_per_package" class="form-label">Cost per Package (₹)</label><input type="number" class="form-control" id="cost_per_package" name="cost_per_package" required></div>
-            <div class="col-md-4 mb-3"><label for="days" class="form-label">Days</label><input type="number" class="form-control" id="days" name="days" required></div>
-            <div class="col-md-4 mb-3"><label for="nights" class="form-label">Nights</label><input type="number" class="form-control" id="nights" name="nights" required></div>
-          </div>
-          <div class="mb-3"><label for="group_size" class="form-label">Max Group Size</label><input type="number" class="form-control" id="group_size" name="group_size" required></div>
-          <div class="mb-3"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="3" required></textarea></div>
-          <div class="mb-3"><label for="highlights" class="form-label">Highlights (comma-separated)</label><input type="text" class="form-control" id="highlights" name="highlights" required></div>
-          <div class="mb-3"><label for="inclusions_detailed" class="form-label">Inclusions (comma-separated)</label><input type="text" class="form-control" id="inclusions_detailed" name="inclusions_detailed" required></div>
-          <div class="mb-3"><label for="exclusions_detailed" class="form-label">Exclusions (comma-separated)</label><input type="text" class="form-control" id="exclusions_detailed" name="exclusions_detailed" required></div>
-          <div class="mb-3"><label for="destination_img" class="form-label">Upload Image</label><input class="form-control" type="file" id="destination_img" name="destination_img" accept="image/*" required></div>
-          <button type="submit" class="btn btn-dark">Submit Package for Review</button>
-        </form>
+    <div class="tab-pane fade" id="view-packages" role="tabpanel">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="dashboard-section-title">Your Submitted Packages</h3>
+        <a href="{{ url_for('add_package') }}" class="btn btn-primary">Add New Package</a>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Destination</th>
+              <th>Cost (₹)</th>
+              <th>Days</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pkg in package_submissions %}
+            <tr>
+              <td>{{ pkg.package_name }}</td>
+              <td>{{ pkg.destination }}</td>
+              <td>{{ "{:,.0f}".format(pkg.cost_per_package) }}</td>
+              <td>{{ pkg.days }}</td>
+              <td><a href="{{ url_for('edit_package', submission_id=pkg.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center">You have not submitted any packages yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      {% else %}
-
-        <h3>Step 2: Add Itinerary for '{{ new_pkg_name }}'</h3>
-        <form method="POST" action="{{ url_for('add_itinerary') }}">
-          <input type="hidden" name="package_name" value="{{ new_pkg_name }}">
-          <input type="hidden" name="num_days" value="{{ days_for_itinerary }}">
-          
-          {% for day_num in range(1, days_for_itinerary + 1) %}
-          <div class="itinerary-day-form">
-            <h5>Day {{ day_num }}</h5>
-            <div class="mb-3">
-              <label for="title_{{ day_num }}" class="form-label">Day Title</label>
-              <input type="text" class="form-control" id="title_{{ day_num }}" name="title_{{ day_num }}" placeholder="e.g., Arrival in Goa" required>
-            </div>
-            <div class="mb-3">
-              <label for="description_{{ day_num }}" class="form-label">Day Description</label>
-              <textarea class="form-control" id="description_{{ day_num }}" name="description_{{ day_num }}" rows="2" required></textarea>
-            </div>
-          </div>
-          {% endfor %}
-
-          <button type="submit" class="btn btn-secondary mt-3">Submit Full Itinerary</button>
-        </form>
-        <hr>
-        <a href="{{ url_for('agency_dashboard') }}" class="btn btn-outline-dark">Add Another Package</a>
-
-      {% endif %}
+    <div class="tab-pane fade" id="view-itineraries" role="tabpanel">
+       <h3 class="dashboard-section-title">Your Submitted Itineraries</h3>
+       <div class="table-responsive mt-3">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Day</th>
+              <th>Title</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in itinerary_submissions %}
+            <tr>
+              <td>{{ package_names_by_id[item.package_submissions_id] }}</td>
+              <td>{{ item.day_no }}</td>
+              <td>{{ item.title }}</td>
+              {# --- THIS LINK IS NOW CORRECTED --- #}
+              <td><a href="{{ url_for('edit_itinerary', itinerary_id=item.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center">No itinerary details submitted.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     {% endif %}
   </div>
 </div>
-
-<script src="{{ url_for('static', filename='js/agency.js') }}"></script>
 {% endblock %}
