@@ -1,0 +1,35 @@
+
+<!-- templates/edit_package.html -->
+{% extends "base.html" %}
+{% block title %}Edit Package | TrippyPick{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Edit Package: {{ package.package_name }}</h1>
+    <p class="text-muted mb-4">Update the details for your package below. The admin will be notified of your changes.</p>
+    <form method="POST" action="{{ url_for('edit_package', submission_id=package.id) }}">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="package_name" class="form-label">Package Name</label>
+            <input type="text" class="form-control" name="package_name" value="{{ package.package_name }}" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="destination" class="form-label">Destination</label>
+            <input type="text" class="form-control" name="destination" value="{{ package.destination }}" required>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3"><label for="cost_per_package" class="form-label">Cost per Package (₹)</label><input type="number" class="form-control" name="cost_per_package" value="{{ package.cost_per_package }}" required></div>
+            <div class="col-md-4 mb-3"><label for="days" class="form-label">Days</label><input type="number" class="form-control" name="days" value="{{ package.days }}" required></div>
+            <div class="col-md-4 mb-3"><label for="nights" class="form-label">Nights</label><input type="number" class="form-control" name="nights" value="{{ package.nights }}" required></div>
+        </div>
+        <div class="mb-3"><label for="group_size" class="form-label">Max Group Size</label><input type="number" class="form-control" name="group_size" value="{{ package.group_size }}" required></div>
+        <div class="mb-3"><label for="description" class="form-label">Description</label><textarea class="form-control" name="description" rows="3" required>{{ package.description }}</textarea></div>
+        <div class="mb-3"><label for="highlights" class="form-label">Highlights (comma-separated)</label><input type="text" class="form-control" name="highlights" value="{{ package.highlights }}" required></div>
+        <div class="mb-3"><label for="inclusions_detailed" class="form-label">Inclusions (comma-separated)</label><input type="text" class="form-control" name="inclusions_detailed" value="{{ package.inclusions_detailed }}" required></div>
+        <div class="mb-3"><label for="exclusions_detailed" class="form-label">Exclusions (comma-separated)</label><input type="text" class="form-control" name="exclusions_detailed" value="{{ package.exclusions_detailed }}" required></div>
+        
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('agency_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
