@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Edit Itinerary Day | TrippyPick{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>Edit Itinerary: Day {{ item.day_no }}</h1>
+    <p class="text-muted mb-4">Update the details for this day's schedule below.</p>
+    
+    <form method="POST" action="{{ url_for('edit_itinerary', itinerary_id=item.id) }}">
+        <div class="mb-3">
+            <label for="title" class="form-label">Day Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ item.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Day Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required>{{ item.description }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('agency_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

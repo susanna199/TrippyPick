@@ -1,0 +1,26 @@
+
+<!-- templates/add_itinerary.html -->
+{% extends "base.html" %}
+{% block title %}Add Itinerary | TrippyPick{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Step 2: Add Itinerary for '{{ package.package_name }}'</h1>
+    <p class="text-muted mb-4">Please fill out the details for each of the {{ package.days }} days of the trip.</p>
+    <form method="POST" action="{{ url_for('add_itinerary', submission_id=package.id) }}">
+        {% for day_num in range(1, package.days + 1) %}
+        <div class="itinerary-day-form border p-3 mb-3 rounded">
+            <h5>Day {{ day_num }}</h5>
+            <div class="mb-3">
+                <label for="title_{{ day_num }}" class="form-label">Day Title</label>
+                <input type="text" class="form-control" id="title_{{ day_num }}" name="title_{{ day_num }}" placeholder="e.g., Arrival in Goa" required>
+            </div>
+            <div class="mb-3">
+                <label for="description_{{ day_num }}" class="form-label">Day Description</label>
+                <textarea class="form-control" id="description_{{ day_num }}" name="description_{{ day_num }}" rows="2" required></textarea>
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-3">Submit Full Itinerary</button>
+    </form>
+</div>
+{% endblock %}

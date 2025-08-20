@@ -1,0 +1,28 @@
+<!-- templates/add_package.html -->
+{% extends "base.html" %}
+{% block title %}Add New Package | TrippyPick{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1>Step 1: Submit a New Package</h1>
+    <p class="text-muted mb-4">Fill out the main details for your package. You will add the day-by-day itinerary in the next step.</p>
+    <form method="POST" action="{{ url_for('add_package') }}" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 mb-3"><label for="package_name" class="form-label">Package Name</label><input type="text" class="form-control" id="package_name" name="package_name" required></div>
+            <div class="col-md-6 mb-3"><label for="destination" class="form-label">Destination</label><input type="text" class="form-control" id="destination" name="destination" required></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3"><label for="cost_per_package" class="form-label">Cost per Package (₹)</label><input type="number" class="form-control" id="cost_per_package" name="cost_per_package" required></div>
+            <div class="col-md-4 mb-3"><label for="days" class="form-label">Days</label><input type="number" class="form-control" id="days" name="days" required></div>
+            <div class="col-md-4 mb-3"><label for="nights" class="form-label">Nights</label><input type="number" class="form-control" id="nights" name="nights" required></div>
+        </div>
+        <div class="mb-3"><label for="group_size" class="form-label">Max Group Size</label><input type="number" class="form-control" id="group_size" name="group_size" required></div>
+        <div class="mb-3"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="3" required></textarea></div>
+        <div class="mb-3"><label for="highlights" class="form-label">Highlights (comma-separated)</label><input type="text" class="form-control" id="highlights" name="highlights" required></div>
+        <div class="mb-3"><label for="inclusions_detailed" class="form-label">Inclusions (comma-separated)</label><input type="text" class="form-control" id="inclusions_detailed" name="inclusions_detailed" required></div>
+        <div class="mb-3"><label for="exclusions_detailed" class="form-label">Exclusions (comma-separated)</label><input type="text" class="form-control" id="exclusions_detailed" name="exclusions_detailed" required></div>
+        <div class="mb-3"><label for="destination_img" class="form-label">Upload Image</label><input class="form-control" type="file" id="destination_img" name="destination_img" accept="image/*" required></div>
+        <button type="submit" class="btn btn-dark">Submit and Add Itinerary</button>
+    </form>
+</div>
+{% endblock %}
+
