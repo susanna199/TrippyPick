@@ -3,7 +3,7 @@
 
 {% block head %}
   {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -17,8 +17,9 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ category }} mb-3" role="alert">
+          <div class="alert alert-{{ category }} alert-dismissible fade show mb-3" role="alert">
             {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       {% endif %}
@@ -27,17 +28,17 @@
     <!-- Tab Navigation -->
     <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="agencies-tab" data-bs-toggle="tab" data-bs-target="#agencies" type="button" role="tab">New Agency Listings</button>
+        <a class="nav-link active" data-bs-toggle="tab" href="#agencies">New Agency Listings</a>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" type="button" role="tab">Package Submissions</button>
+        <a class="nav-link" data-bs-toggle="tab" href="#packages">Package Submissions</a>
       </li>
     </ul>
 
     <!-- Tab Content -->
     <div class="tab-content" id="adminTabContent">
       <!-- Agency Submissions Tab -->
-      <div class="tab-pane fade show active" id="agencies" role="tabpanel">
+      <div class="tab-pane container active" id="agencies">
         <h3>Pending Agency Approvals</h3>
         <form method="POST" action="{{ url_for('verify_agencies') }}">
           <div class="table-responsive">
@@ -70,7 +71,13 @@
                       <span class="status-badge status-pending">No</span>
                     {% endif %}
                   </td>
-                  <td>{{ agency.status | replace("_", " ") | title }}</td>
+                  <td>
+                    {{ agency.status | replace("_", " ") | title }}
+                    {# --- NOTIFICATION FOR ADMIN --- #}
+                    {% if 'edited' in agency.status %}
+                      <span class="badge bg-info text-dark ms-2">Updated</span>
+                    {% endif %}
+                  </td>
                 </tr>
                 {% else %}
                 <tr><td colspan="6" class="text-center">No new agency submissions.</td></tr>
@@ -79,13 +86,13 @@
             </table>
           </div>
           <div class="verify-section">
-            <button type="submit" class="btn btn-primary">Verify Selected Agencies</button>
+            <button type="submit" class="btn btn-dark">Verify Selected Agencies</button>
           </div>
         </form>
       </div>
 
       <!-- Package Submissions Tab -->
-      <div class="tab-pane fade" id="packages" role="tabpanel">
+      <div class="tab-pane container fade" id="packages">
         <h3>Pending Package Submissions</h3>
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -102,22 +109,28 @@
             <tbody>
                 {% for package in package_submissions %}
                 <tr>
-                <td>{{ package.package_name }}</td>
+                <td>
+                  {{ package.package_name }}
+                  {# --- NOTIFICATION FOR ADMIN --- #}
+                  {% if package.edited_by_agency %}
+                    <span class="badge bg-info text-dark ms-2">Edited</span>
+                  {% endif %}
+                </td>
                 <td>{{ package.agency_name }}</td>
                 <td>{{ package.destination }}</td>
                 <td>₹{{ "{:,.0f}".format(package.cost_per_package) }}</td>
                 <td>
                     {% if package.inclusions %}
-                    {{ package.inclusions }}
+                      {{ package.inclusions }}
                     {% else %}
-                    <a href="{{ url_for('run_inclusion_summarizer', submission_id=package.id) }}" class="btn btn-sm btn-outline-secondary">Run Summarizer</a>
+                      <a href="{{ url_for('run_inclusion_summarizer', submission_id=package.id) }}" class="btn btn-sm btn-outline-secondary">Run Summarizer</a>
                     {% endif %}
                 </td>
                 <td>
                     {% if package.themes %}
-                    {{ package.themes }}
+                      {{ package.themes }}
                     {% else %}
-                    <a href="{{ url_for('run_theme_classifier', submission_id=package.id) }}" class="btn btn-sm btn-outline-info">Run Classifier</a>
+                      <a href="{{ url_for('run_theme_classifier', submission_id=package.id) }}" class="btn btn-sm btn-outline-info">Run Classifier</a>
                     {% endif %}
                 </td>
                 </tr>
