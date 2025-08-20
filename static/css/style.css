@@ -1360,6 +1360,144 @@ nav:hover {
     border-color: #000;
 }
 
+/* ======================
+   Admin Dashboard Styles
+ ====================== */
+#admin-dashboard {
+    padding: 40px 60px;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+#admin-dashboard h1 {
+    font-weight: 800;
+}
+
+#admin-dashboard .table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#admin-dashboard .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+#admin-dashboard .table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+#admin-dashboard .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+#admin-dashboard .status-badge {
+    padding: 0.3em 0.6em;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+#admin-dashboard .status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+#admin-dashboard .status-approved {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+#admin-dashboard .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+#admin-dashboard .verify-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* ======================
+   Admin Dashboard Styles
+ ====================== */
+#admin-dashboard {
+    padding: 40px 60px;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+#admin-dashboard h1, #admin-dashboard h3 {
+    font-weight: 700;
+}
+
+#admin-dashboard .table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-size: 0.9rem;
+}
+
+#admin-dashboard .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#admin-dashboard .table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+#admin-dashboard .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+#admin-dashboard .status-badge {
+    padding: 0.3em 0.6em;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+#admin-dashboard .status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+#admin-dashboard .status-approved {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+#admin-dashboard .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+#admin-dashboard .verify-section {
+    margin-top: 20px;
+    text-align: right;
+}
+
+/* Tab styling */
+#admin-dashboard .nav-tabs .nav-link {
+    color: #555;
+    font-weight: 600;
+}
+#admin-dashboard .nav-tabs .nav-link.active {
+    color: #000;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+
 /* ==========================
   Caption Recommender Page
 ========================== */
