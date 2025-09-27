@@ -33,7 +33,6 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-print(OPENAI_API_KEY)
 
 # Create Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -383,7 +382,33 @@ def compare():
         packages_to_add=packages_to_add
     )
 
+# --- API ROUTE FOR SEARCHING ---
+@app.route('/api/search_packages')
+def api_search_packages():
+    search_term = request.args.get('q', '').strip()
+    exclude_ids_str = request.args.get('exclude_ids', '')
+    
+    exclude_ids = []
+    if exclude_ids_str:
+        exclude_ids = [int(id) for id in exclude_ids_str.split(',') if id.isdigit()]
 
+    if not search_term:
+        return jsonify([])
+
+    # --- THIS IS THE CORRECTED QUERY ---
+    # The .or_() filter requires a single string with conditions separated by a comma.
+    search_filter = f"package_name.ilike.*{search_term}*,destination.ilike.*{search_term}*"
+    
+    query = supabase.table('packages').select(
+        'package_id, package_name, destination, cost_per_package, destination_img'
+    ).or_(search_filter)
+
+    if exclude_ids:
+        query = query.not_.in_('package_id', exclude_ids)
+
+    response = query.limit(10).execute()
+
+    return jsonify(response.data if response.data else [])
 
 @app.route('/insights')
 def insights():
@@ -605,35 +630,17 @@ def agency_signup():
     # This runs when the page is first loaded
     return render_template('agency_signup.html')
 
-# --- NEW: Agency Dashboard and Related Routes --
-# --- Admin Routes ---
-# @app.route('/admin/dashboard')
-# def admin_dashboard():
-#     if not session.get('admin_logged_in'):
-#         return redirect(url_for('login'))
-
-#     # Fetch data for both tabs
-#     agency_submissions = supabase.table('agency_submissions').select('*').execute().data or []
-#     package_submissions = supabase.table('package_submissions').select('*').execute().data or []
-    
-#     return render_template(
-#         'admin_dashboard.html',
-#         agency_submissions=agency_submissions,
-#         package_submissions=package_submissions
-#     )
 # --- Admin Routes ---
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('admin_logged_in'):
         return redirect(url_for('login'))
-
-    # Fetch all agency submissions, ordered by most recent
-    agency_submissions = supabase.table('agency_submissions').select('*').order('created_at', desc=True).execute().data or []
     
-    # Fetch all package submissions, ordered by most recent
-    package_submissions_raw = supabase.table('package_submissions').select('*').order('created_at', desc=True).execute().data or []
+    # Fetch all agency submissions without sorting by a specific column
+    agency_submissions = supabase.table('agency_submissions').select('*').execute().data or []
+    # Fetch all package submissions without sorting
+    package_submissions_raw = supabase.table('package_submissions').select('*').execute().data or []
     
-    # --- THIS IS THE CORRECTED LOGIC ---
     # Create a new list to store the processed packages
     package_submissions = []
     # Loop over the raw data you fetched from the database
@@ -651,68 +658,6 @@ def admin_dashboard():
         agency_submissions=agency_submissions,
         package_submissions=package_submissions
     )
-# @app.route('/agency/dashboard')
-# def agency_dashboard():
-#     # Protect the route
-#     if not session.get('agency_logged_in'):
-#         return redirect(url_for('login')) # Or your unified login route
-
-#     # Fetch the agency's current submission status
-#     email = session.get('agency_email')
-#     response = supabase.table('agency_submissions').select('*').eq('email', email).single().execute()
-
-#     if not response.data:
-#         # Log them out if their record was deleted by an admin
-#         session.clear()
-#         return redirect(url_for('login'))
-
-#     # Render the dashboard with their status
-#     return render_template('agency_dashboard.html', submission=response.data)
-
-# was working.. trying to update somechanges which is why the below is commented
-# @app.route('/agency/dashboard')
-# def agency_dashboard():
-#     # Step 1: Protect the route. If no one is logged in, redirect to the login page.
-#     if not session.get('agency_logged_in'):
-#         flash('Please log in to access the dashboard.', 'warning')
-#         return redirect(url_for('login'))
-    
-#     # Check for parameters passed after a package submission
-#     package_submitted = request.args.get('package_submitted', default=False, type=bool)
-#     new_pkg_name = request.args.get('new_pkg_name', default='')
-    
-#     days_for_itinerary = 0
-#     if package_submitted and new_pkg_name:
-#         # Fetch the number of days for the newly submitted package
-#         pkg_days_response = supabase.table('package_submissions').select('days').eq('package_name', new_pkg_name).order('created_at', desc=True).limit(1).single().execute()
-#         if pkg_days_response.data:
-#             days_for_itinerary = pkg_days_response.data.get('days', 0)
-
-#     # Step 2: Fetch the agency's current submission status from the database
-#     email = session.get('agency_email')
-#     response = supabase.table('agency_submissions').select('*').eq('email', email).single().execute()
-    
-#     # Step 3: Handle the case where the agency might have been deleted by an admin
-#     if not response.data:
-#         session.clear() # Log them out if their record is gone
-#         flash('Your agency profile could not be found.', 'danger')
-#         return redirect(url_for('login'))
-
-#     # Step 4: Fetch the agency's submitted packages for the itinerary dropdown
-#     agency_name = session.get('agency_name')
-#     pkg_submission_response = supabase.table('package_submissions').select('package_name').eq('agency_name', agency_name).execute()
-#     submitted_packages = pkg_submission_response.data if pkg_submission_response.data else []
-
-#     # Step 5: Render the dashboard template with all the necessary data
-#     return render_template(
-#         'agency_dashboard.html', 
-#         submission=response.data,
-#         submitted_packages=submitted_packages,
-#         package_submitted=package_submitted,
-#         new_pkg_name=new_pkg_name,
-#         days_for_itinerary=days_for_itinerary
-#     )
-
 
 @app.route('/admin/logout')
 def admin_logout():
@@ -756,7 +701,10 @@ def run_inclusion_summarizer(submission_id):
     Summarize the following travel package inclusions into exactly 3 concise bullet points.
     Return the 3 points as a single comma-separated string. Do not include python code, variable names, or markdown formatting.
 
-    Example output: Accommodation, Daily breakfast, Guided tours
+    If the text is irrelevant, nonsensical, or does not describe inclusions, respond with:
+    Not available
+
+    Example only (DO NOT COPY): Accommodation, Daily breakfast, Guided tours
 
     Text to summarize:
     {inclusions_text}
@@ -766,7 +714,7 @@ def run_inclusion_summarizer(submission_id):
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0
+            temperature=0.7
         )
         summary_raw = response.choices[0].message.content
 
@@ -788,6 +736,7 @@ def run_theme_classifier(submission_id):
     if not session.get('admin_logged_in'):
         return redirect(url_for('login'))
 
+    # --- Fetch package data ---
     pkg_res = supabase.table('package_submissions').select('package_name, description').eq('id', submission_id).single().execute()
     if not pkg_res.data:
         flash('Package submission not found.', 'danger')
@@ -796,6 +745,7 @@ def run_theme_classifier(submission_id):
     package_name = pkg_res.data['package_name']
     itinerary_res = supabase.table('itinerary_submissions').select('description').eq('package_name', package_name).execute()
     
+    # --- Merge descriptions ---
     full_text = pkg_res.data.get('description', '')
     if itinerary_res.data:
         itinerary_text = " ".join([i['description'] for i in itinerary_res.data])
@@ -805,63 +755,25 @@ def run_theme_classifier(submission_id):
         flash('No text available to classify themes.', 'warning')
         return redirect(url_for('admin_dashboard'))
 
+    # --- Run zero-shot classification ---
     result = theme_classifier(full_text, CANDIDATE_LABELS, multi_label=True)
-    themes = result['labels'][:3]
 
+    # --- Confidence threshold check ---
+    scores = result['scores']
+    labels = result['labels']
+
+    max_score = max(scores) if scores else 0
+    threshold = 0.4  # adjust as needed
+
+    if max_score < threshold:
+        themes = ["Not available"]
+    else:
+        themes = labels[:3]
+
+    # --- Save result to Supabase ---
     supabase.table('package_submissions').update({'themes': ", ".join(themes)}).eq('id', submission_id).execute()
     flash('Themes classified successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
-
-# @app.route('/agency/add_package', methods=['POST'])
-# def add_package():
-#     # Protect the route
-#     if not session.get('agency_logged_in'):
-#         return redirect(url_for('login'))
-
-#     # --- Handle File Upload ---
-#     if 'destination_img' not in request.files:
-#         flash('Image file is missing.', 'danger')
-#         return redirect(url_for('agency_dashboard'))
-#     file = request.files['destination_img']
-#     if file.filename == '':
-#         flash('No image selected for upload.', 'danger')
-#         return redirect(url_for('agency_dashboard'))
-    
-#     if file:
-#         # Secure the filename and save it to your uploads folder
-#         filename = secure_filename(file.filename)
-#         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#         file.save(filepath)
-        
-#         agency_name = session.get('agency_name')
-
-#         # --- Prepare data for the package_submissions table ---
-#         package_data = {
-#             "package_name": request.form.get('package_name'),
-#             "agency_name": agency_name,
-#             "destination": request.form.get('destination'),
-#             "cost_per_package": request.form.get('cost_per_package'),
-#             "days": request.form.get('days'),
-#             "nights": request.form.get('nights'),
-#             "group_size": request.form.get('group_size'),
-#             "description": request.form.get('description'),
-#             "highlights": request.form.get('highlights'),
-#             "inclusions_detailed": request.form.get('inclusions_detailed'),
-#             "exclusions_detailed": request.form.get('exclusions_detailed'),
-#             "destination_img": filepath # Save the path to the image
-#         }
-
-#         # --- Insert into package_submissions table ---
-#         supabase.table('package_submissions').insert(package_data).execute()
-
-#         # --- Update the agency's status to show they've added a package ---
-#         supabase.table('agency_submissions').update({"status": "package details added"}).eq('agency_name', agency_name).execute()
-
-#         flash('Package submitted successfully for admin review!', 'success')
-#         return redirect(url_for('agency_dashboard', package_submitted=True, new_pkg_name=package_data['package_name']))
-# --- Agency Dashboard and Related Routes ---
-
-# --- Agency Dashboard and Related Routes ---
 
 @app.route('/agency/dashboard')
 def agency_dashboard():
@@ -879,7 +791,7 @@ def agency_dashboard():
         return redirect(url_for('login'))
 
     # Fetch all package submissions for this agency
-    package_submissions_raw = supabase.table('package_submissions').select('id, package_name, destination, cost_per_package, days, group_size, highlights').eq('agency_name', agency_name).order('created_at', desc=True).execute().data or []
+    package_submissions_raw = supabase.table('package_submissions').select('id, package_name, destination, cost_per_package, days, group_size, highlights').eq('agency_name', agency_name).execute().data or []
     
     # --- THIS IS THE FIX ---
     # 1. Create a simple dictionary to map package IDs to their names
